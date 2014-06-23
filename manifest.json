@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "Research Tree",
+  "description": "Tab workflow tracker",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "images/icon.png"
+  },
+
+  "background": {
+    "scripts": ["visualization/graph-view.js"]
+  },
+
+  "permissions": [
+    "tabs"
+  ]
+}
