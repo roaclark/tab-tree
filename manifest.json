@@ -1,24 +1,24 @@
 {
-	"manifest_version": 2,
+    "manifest_version": 2,
 
-	"name": "Research Tree",
-	"description": "Tab workflow tracker",
-	"version": "1.0",
+    "name": "Research Tree",
+    "description": "Tab workflow tracker",
+    "version": "1.0",
 
-	"icons": {
-		"16": "images/icon-16.png"
-	},
+    "icons": {
+        "16": "images/icon-16.png"
+    },
 
-	"browser_action": {
-		"default_icon": "images/icon2.png"
-	},
+    "browser_action": {
+        "default_icon": "images/icon2.png"
+    },
 
-	"background": {
-		"scripts": ["background.js"]
-	},
+    "background": {
+        "scripts": ["model/graph-structure.js", "model/link-graph.js", "background.js"]
+    },
 
-	"permissions": [
-		"tabs",
-		"contextMenus"
-	]
+    "permissions": [
+        "tabs",
+        "contextMenus"
+    ]
 }

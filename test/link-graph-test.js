@@ -25,55 +25,55 @@
 // getChildrenOfNode(url)
 
 w = function(str) {
-	document.write(str);
+    document.write(str);
 };
 
 wb = function(n) {
-	for (var i = n || 1; i > 0; i--) {
-		w("<br>")
-	}
+    for (var i = n || 1; i > 0; i--) {
+        w("<br>")
+    }
 };
 
 writeNodes = function(nodes) {
-	for(var i = 0; i < nodes.length; i++) {
-		writeNode(nodes[i]);
-	}
+    for (var i = 0; i < nodes.length; i++) {
+        writeNode(nodes[i]);
+    }
 };
 
 writeNode = function(node) {
-	w("--------------- Node ---------------");
-	wb();
-	w(node.value.url);
-	wb();
-	w("Parents:");
-	for (var id in node.parentids) {
-		wb();
-		w("&nbsp;&nbsp;&nbsp;&nbsp;");
-		w(id);
-	}
-	wb();
-	w("Children:");
-	for (var id in node.childids) {
-		wb();
-		w("&nbsp;&nbsp;&nbsp;&nbsp;");
-		w(id);
-	}
-	wb();
-	w("Value:")
-	for (var prop in node.value) {
-		wb();
-		w("&nbsp;&nbsp;&nbsp;&nbsp;");
-		w(prop + ": " + node.value[prop]);
-	}
-	wb();
+    w("--------------- Node ---------------");
+    wb();
+    w(node.value.url);
+    wb();
+    w("Parents:");
+    for (var id in node.parentids) {
+        wb();
+        w("&nbsp;&nbsp;&nbsp;&nbsp;");
+        w(id);
+    }
+    wb();
+    w("Children:");
+    for (var id in node.childids) {
+        wb();
+        w("&nbsp;&nbsp;&nbsp;&nbsp;");
+        w(id);
+    }
+    wb();
+    w("Value:")
+    for (var prop in node.value) {
+        wb();
+        w("&nbsp;&nbsp;&nbsp;&nbsp;");
+        w(prop + ": " + node.value[prop]);
+    }
+    wb();
 };
 
 writeList = function(list) {
-	for (var i = 0; i < list.length; i++) {
-		wb();
-		w("&nbsp;&nbsp;&nbsp;&nbsp;");
-		w(list[i]);
-	}
+    for (var i = 0; i < list.length; i++) {
+        wb();
+        w("&nbsp;&nbsp;&nbsp;&nbsp;");
+        w(list[i]);
+    }
 };
 
 w("Empty urls: ");
@@ -91,10 +91,15 @@ LinkGraph.addUnreadNode("search-result-1-1", "result 1", "this is a result", {},
 LinkGraph.markResource("search-result-1-1");
 LinkGraph.addUnreadNode("search-result-1-2", undefined, "this is also a result", {}, "search-1-no-parent");
 LinkGraph.markSupport("search-result-1-2");
-LinkGraph.addUnreadNode("search-result-1-3", "more", "extras", {number: 1, call: "whee"}, "search-1-no-parent");
+LinkGraph.addUnreadNode("search-result-1-3", "more", "extras", {
+    number: 1,
+    call: "whee"
+}, "search-1-no-parent");
 
 LinkGraph.addSearchNode("search-2-with-parent", "yes parent", "search-result-1-1");
-LinkGraph.addUnreadNode("search-result-2-1", "Yay for titles", undefined, {number: 1}, "search-2-with-parent");
+LinkGraph.addUnreadNode("search-result-2-1", "Yay for titles", undefined, {
+    number: 1
+}, "search-2-with-parent");
 LinkGraph.markResource("search-result-2-1");
 LinkGraph.addUnreadNode("search-result-2-2", "Only title", undefined, {}, "search-2-with-parent");
 LinkGraph.markResource("search-result-2-2");
@@ -144,9 +149,9 @@ wb();
 LinkGraph.setTitle("search-result-2-3", "New title");
 LinkGraph.setDescription("search-result-2-3", "New description");
 LinkGraph.updateInfo("search-result-2-2", {
-	title: "Titles and more",
-	number: 5,
-	other: "Yes please"
+    title: "Titles and more",
+    number: 5,
+    other: "Yes please"
 });
 w("Nodes updated");
 wb(2);

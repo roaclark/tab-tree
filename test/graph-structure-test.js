@@ -23,14 +23,14 @@ document.write(graph.getNode(1).value);
 document.write("<br>");
 document.write("Node1 children: ");
 for (var id in graph.getNode(1).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node1 parents: ");
 for (var id in graph.getNode(1).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("<br>");
@@ -41,14 +41,14 @@ document.write(graph.getNode(2).value);
 document.write("<br>");
 document.write("Node2 children: ");
 for (var id in graph.getNode(2).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 parents: ");
 for (var id in graph.getNode(2).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("<br>");
@@ -65,14 +65,14 @@ document.write(graph.getNode(1).value);
 document.write("<br>");
 document.write("Node1 children: ");
 for (var id in graph.getNode(1).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node1 parents: ");
 for (var id in graph.getNode(1).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 value: ");
@@ -80,14 +80,14 @@ document.write(graph.getNode(2).value);
 document.write("<br>");
 document.write("Node2 children: ");
 for (var id in graph.getNode(2).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 parents: ");
 for (var id in graph.getNode(2).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("<br>");
@@ -113,14 +113,14 @@ document.write(graph.getNode(1).value);
 document.write("<br>");
 document.write("Node1 children: ");
 for (var id in graph.getNode(1).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node1 parents: ");
 for (var id in graph.getNode(1).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 value: ");
@@ -128,14 +128,14 @@ document.write(graph.getNode(2).value);
 document.write("<br>");
 document.write("Node2 children: ");
 for (var id in graph.getNode(2).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 parents: ");
 for (var id in graph.getNode(2).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node3 value: ");
@@ -143,14 +143,14 @@ document.write(graph.getNode(3).value);
 document.write("<br>");
 document.write("Node3 children: ");
 for (var id in graph.getNode(3).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node3 parents: ");
 for (var id in graph.getNode(3).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("<br>");
@@ -167,14 +167,14 @@ document.write(graph.getNode(1).value);
 document.write("<br>");
 document.write("Node1 children: ");
 for (var id in graph.getNode(1).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node1 parents: ");
 for (var id in graph.getNode(1).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 value: ");
@@ -182,14 +182,14 @@ document.write(graph.getNode(2).value);
 document.write("<br>");
 document.write("Node2 children: ");
 for (var id in graph.getNode(2).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 parents: ");
 for (var id in graph.getNode(2).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node3 value: ");
@@ -197,14 +197,14 @@ document.write(graph.getNode(3).value);
 document.write("<br>");
 document.write("Node3 children: ");
 for (var id in graph.getNode(3).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node3 parents: ");
 for (var id in graph.getNode(3).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("<br>");
@@ -224,14 +224,14 @@ document.write(graph.getNode(1).value);
 document.write("<br>");
 document.write("Node1 children: ");
 for (var id in graph.getNode(1).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node1 parents: ");
 for (var id in graph.getNode(1).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 value: ");
@@ -239,14 +239,14 @@ document.write(graph.getNode(2).value);
 document.write("<br>");
 document.write("Node2 children: ");
 for (var id in graph.getNode(2).childids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("Node2 parents: ");
 for (var id in graph.getNode(2).parentids) {
-	document.write(id);
-	document.write(" ");
+    document.write(id);
+    document.write(" ");
 }
 document.write("<br>");
 document.write("<br>");
