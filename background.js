@@ -120,7 +120,6 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    console.log("listener " + activeTabId);
     if (tabId == activeTabId && changeInfo.url) {
         createContextMenus(LinkGraph.getNode(changeInfo.url));
     }
