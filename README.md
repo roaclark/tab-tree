@@ -1,7 +1,5 @@
 This is a chrome extension to help track sites during research or exploration. Sites are represented as nodes in a graph. When you navigate to a related page or begin a search, you can add that new page as a child of your current page. Unread nodes are marked so that you can easily return to them without leaving the tab open.
 
----
-
 Installation
 ------------
 
@@ -15,8 +13,6 @@ Installation
 4. Click on 'Load unpacked extensions...'
 
 5. Select the directory that you cloned the source code into.
-
----
 
 Usage
 -----
