@@ -82,18 +82,21 @@ function prepareNodes() {
             newDiv.append("p").html("<h2>" + node.value.title + "</h2>");
             newDiv.append("p").html(node.value.description);
             newDiv.append("p").html("(" + node.value.url + ")");
+        })
+        .on("dblclick", function(node) {
+            page.openTab(node.value.url);
         });
 };
 
 prepareLinks();
 prepareNodes();
 
-d3.select("body").on('click', function () {
+d3.select("body").on("click", function () {
     if (!d3.select(d3.event.target).classed("node")) {
         clearInfoPane();
     }
 });
-d3.select("body").on('dblclick', function () {
+d3.select("body").on("dblclick", function () {
     if (!d3.select(d3.event.target).classed("node")) {
         var url = prompt("Enter a URL");
         if (url) {
