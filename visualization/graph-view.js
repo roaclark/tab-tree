@@ -59,6 +59,16 @@ node = node.data(pageNodes)
     .call(force.drag())
     .each(function(node) {
         d3.select(this).classed(node.value.type, true);
+    })
+    .on("click", function(node) {
+        d3.select(".node.selected").classed("selected", false);
+        d3.select(this).classed("selected", true);
+        var infoPane = d3.select("#infoPane");
+        infoPane.selectAll("div").remove();
+        var newDiv = infoPane.append("div");
+        newDiv.append("p").html("<h2>" + node.value.title + "</h2>");
+        newDiv.append("p").html(node.value.description);
+        newDiv.append("p").html("(" + node.value.url + ")");
     });
 
 document.getElementById("icon").onclick = function() {

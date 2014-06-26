@@ -22,7 +22,7 @@ LinkGraphCons = function() {
     }
 
     this.addUnreadNode = function(url, title, description, other, parent) {
-        var info = new LinkInfo("unread", url, title || "Untitled", description || "");
+        var info = new LinkInfo("unread", url, title || "Untitled", description || "No description available");
         graph.addNode(url, info);
         this.updateInfo(url, other || {})
         if (parent) {
