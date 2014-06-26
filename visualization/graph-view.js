@@ -14,7 +14,7 @@ pageNodes.map(function (node) {
     }
 });
 
-var width = window.innerWidth - 50,
+var width = window.innerWidth - document.getElementById("infoPane").offsetWidth,
     height = window.innerHeight - 50;
 
 var svg = d3.select("body").append("svg")
@@ -59,7 +59,7 @@ node = node.data(pageNodes)
     .call(force.drag())
     .each(function(node) {
         d3.select(this).classed(node.value.type, true);
-    });;
+    });
 
 document.getElementById("icon").onclick = function() {
     force.nodes().map(function (node) {
@@ -70,7 +70,7 @@ document.getElementById("icon").onclick = function() {
 
 window.onresize = function(event) {
     for (a in event) {
-        width = window.innerWidth - 50,
+        width = window.innerWidth - document.getElementById("infoPane").offsetWidth,
         height = window.innerHeight - 50;
         svg.attr("width", width)
             .attr("height", height);

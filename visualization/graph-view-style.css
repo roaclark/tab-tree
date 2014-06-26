@@ -1,3 +1,23 @@
+body {
+    overflow: hidden;
+    background-color: #fcfcfc;
+}
+
+#infoPane {
+    overflow: auto;
+    overflow-x: hidden;
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    right: 20px;
+    background-color: #ffffff;
+    width: 300px;
+    border: 1px #ccc solid;
+    border-radius: 10px;
+    padding: 5px 15px 5px 25px;
+    font-family: arial, helvetica, sans-serif;
+}
+
 .link {
     stroke: #000;
     stroke-width: 1.5px;
@@ -20,4 +40,12 @@
 
 .node.support {
     fill: #ed2;
+}
+
+.node.support {
+    fill: #ed2;
+}
+
+.node.selected {
+    stroke-width: 5px;
 }
