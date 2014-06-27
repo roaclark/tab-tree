@@ -80,9 +80,9 @@ document.addEventListener('DOMContentLoaded', function() {
         newDiv.append("p").html("<h2>" + node.value.title + "</h2>");
         newDiv.append("p").html(node.value.description);
         newDiv.append("p").html("(" + node.value.url + ")");
+        newDiv.append("p").html("<br><hr>");
         
         makeOption(newDiv, "Remove", "../images/icon2.png", function() {
-            // Removing
             page.LinkGraph.removeNode(node.value.url);
             updateGraph();
             prepareNodes();
@@ -93,7 +93,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         makeOption(newDiv, "Collapse", "../images/icon2.png", function() {
-            alert("collapse");
+            page.LinkGraph.collapseNode(node.value.url);
+            updateGraph();
+            prepareNodes();
+            prepareLinks();
+            force.nodes(pageNodes)
+                 .links(pageLinks)
+                 .start();
         });
 
         makeOption(newDiv, "Edit", "../images/icon2.png", function() {

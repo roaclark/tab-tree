@@ -23,7 +23,7 @@ createContextMenus = function (currentTabInGraph) {
     
     if (currentTabInGraph) {
         var root = chrome.contextMenus.create({
-                title: 'Reasearch Tree',
+                title: 'Research Tree',
                 contexts: ['page']
             },
             function() {
