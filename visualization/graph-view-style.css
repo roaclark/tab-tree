@@ -3,19 +3,36 @@ body {
     background-color: #fcfcfc;
 }
 
-#infoPane {
+p {
+    word-wrap:break-word;
+}
+
+.infoPane {
+    position: absolute;
+    background-color: #ffffff;
+    border: 1px #ccc solid;
+    padding: 15px 35px 15px 35px;
+    font-family: arial, helvetica, sans-serif;
+}
+
+#detailPane {
     overflow: auto;
     overflow-x: hidden;
-    position: absolute;
     top: 20px;
     bottom: 20px;
     right: 20px;
-    background-color: #ffffff;
     width: 300px;
-    border: 1px #ccc solid;
-    border-radius: 10px;
-    padding: 15px 35px 15px 35px;
-    font-family: arial, helvetica, sans-serif;
+    border-radius: 20px;
+}
+
+#titlePane {
+    border-radius: 7px;
+    padding: 5px 5px 5px 5px;
+    visibility: hidden;
+}
+
+#icon {
+    cursor: pointer;
 }
 
 .link {
@@ -47,5 +64,5 @@ body {
 }
 
 .node.selected {
-    stroke-width: 5px;
+    stroke-width: 4px;
 }
