@@ -45,7 +45,9 @@ LinkGraphCons = function() {
         var node = graph.getNode(url);
         for (var parentid in node.parentids) {
             for (var childid in node.childids) {
-                graph.addEdge(parentid, childid);
+                if (parentid != childid) {
+                    graph.addEdge(parentid, childid);
+                }
             }
         }
         graph.removeNode(url);
