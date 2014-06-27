@@ -1,10 +1,17 @@
 body {
     overflow: hidden;
     background-color: #fcfcfc;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 p {
     word-wrap:break-word;
+    font-family: arial, helvetica, sans-serif;
 }
 
 .infoPane {
@@ -13,6 +20,12 @@ p {
     border: 1px #ccc solid;
     padding: 15px 35px 15px 35px;
     font-family: arial, helvetica, sans-serif;
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 #detailPane {

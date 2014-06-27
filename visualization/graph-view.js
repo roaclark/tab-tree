@@ -84,6 +84,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 newDiv.append("p").html("<h2>" + node.value.title + "</h2>");
                 newDiv.append("p").html(node.value.description);
                 newDiv.append("p").html("(" + node.value.url + ")");
+                
+                var removeDiv = newDiv.append("div")
+                    .on("click", function() {
+                        alert("remove");
+                    });
+                removeDiv.append("img")
+                    .attr("src", "../images/icon2.png")
+                    .style("float", "left")
+                    .style("padding-right", "10px");
+                removeDiv.append("p")
+                    .html("Remove");
+
+                var collapseDiv = newDiv.append("div")
+                    .on("click", function() {
+                        alert("collapse");
+                    });
+                collapseDiv.append("img")
+                    .attr("src", "../images/icon2.png")
+                    .style("float", "left")
+                    .style("padding-right", "10px");
+                collapseDiv.append("p")
+                    .html("Collapse");
+
+                var editDiv = newDiv.append("div")
+                    .on("click", function() {
+                        alert("edit");
+                    });
+                editDiv.append("img")
+                    .attr("src", "../images/icon2.png")
+                    .style("float", "left")
+                    .style("padding-right", "10px");
+                editDiv.append("p")
+                    .html("Edit");
             })
             .on("dblclick", function(node) {
                 page.openTab(node.value.url);
@@ -104,13 +137,28 @@ document.addEventListener('DOMContentLoaded', function() {
     prepareLinks();
     prepareNodes();
 
+    function detailPaneSelected(selection) {
+        var selectedDetailPane = false;
+        var nodeSelection = selection.node();
+        while(!selectedDetailPane && nodeSelection != null) {
+            if (nodeSelection.id == "detailPane") {
+                selectedDetailPane = true;
+            } else {
+                nodeSelection = nodeSelection.parentNode;
+            }
+        }
+        return selectedDetailPane;
+    }
+
     d3.select("body").on("click", function () {
-        if (!d3.select(d3.event.target).classed("node")) {
+        var selected = d3.select(d3.event.target);
+        if (!(selected.classed("node") || detailPaneSelected(selected))) {
             clearDetailPane();
         }
     });
     d3.select("body").on("dblclick", function () {
-        if (!d3.select(d3.event.target).classed("node")) {
+        var selected = d3.select(d3.event.target);
+        if (!(selected.classed("node") || detailPaneSelected(selected))) {
             var url = "url" || prompt("Enter a URL");
             if (url) {
                 var title = "title" || prompt("Enter a title");
