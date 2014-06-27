@@ -95,7 +95,11 @@ createContextMenus = function (currentTabInGraph) {
             title: 'Add this link as child page',
             contexts: ['link'],
             onclick: function(info, tab) {
-                LinkGraph.addUnreadNode(info.linkUrl, null, null, null, info.pageUrl);
+                if (LinkGraph.getNode(info.linkUrl)) {
+                    LinkGraph.addLink(info.pageUrl, info.linkUrl);
+                } else {
+                    LinkGraph.addUnreadNode(info.linkUrl, null, null, null, info.pageUrl);
+                }
             }});
     } else {
         chrome.contextMenus.create(createPageMenuItem(
