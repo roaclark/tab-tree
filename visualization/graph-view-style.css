@@ -48,6 +48,15 @@ p {
     cursor: pointer;
 }
 
+.nodeOption {
+    cursor: pointer;
+}
+
+.nodeOptionIcon {
+    float: left;
+    padding-right: 5px;
+}
+
 .link {
     stroke: #000;
     stroke-width: 1.5px;

@@ -1,26 +1,34 @@
 document.addEventListener('DOMContentLoaded', function() {
     var page = chrome.extension.getBackgroundPage();
 
-    var graph = function() {
-        var pageNodes = page.LinkGraph.getNodes().splice(0);
+    var pageNodes = [],
+        pageLinks = [];
+
+    function getNodes() {
+        pageNodes = page.LinkGraph.getNodes();
+    }
+
+    function generateLinks() {
         var nodeMapping = {}
         for (var i = 0; i < pageNodes.length; i++) {
             nodeMapping[pageNodes[i].value.url] = i;
         }
 
-        var pageLinks = [];
+        pageLinks = [];
         pageNodes.map(function (node) {
             for (childid in node.childids) {
                 pageLinks.push({source: nodeMapping[node.value.url],
                            target: nodeMapping[childid]});
             }
         });
+    }
 
-        return [pageNodes, pageLinks];
-    }();
+    function updateGraph() {
+        getNodes();
+        generateLinks();
+    }
 
-    var pageNodes = graph[0],
-        pageLinks = graph[1];
+    updateGraph();
 
     var width = window.innerWidth - document.getElementById("detailPane").offsetWidth,
         height = window.innerHeight - 50;
@@ -54,13 +62,65 @@ document.addEventListener('DOMContentLoaded', function() {
         .links(pageLinks)
         .start();
 
-    function clearDetailPane() {
-        d3.select(".node.selected").classed("selected", false);
-        d3.select("#detailPane").selectAll("div").remove();
+    function makeOption(container, text, icon, onclick) {
+        var optionDiv = container.append("div")
+            .classed("nodeOption", true)
+            .on("click", onclick);
+        optionDiv.append("img")
+            .classed("nodeOptionIcon", true)
+            .attr("src", icon);
+        optionDiv.append("p")
+            .html(text);
+    }
+
+    function showDetails(node) {
+        clearDetailPane();
+        d3.select(this).classed("selected", true);
+        var newDiv = d3.select("#detailPane").append("div");
+        newDiv.append("p").html("<h2>" + node.value.title + "</h2>");
+        newDiv.append("p").html(node.value.description);
+        newDiv.append("p").html("(" + node.value.url + ")");
+        
+        makeOption(newDiv, "Remove", "../images/icon2.png", function() {
+            // Removing
+            page.LinkGraph.removeNode(node.value.url);
+            updateGraph();
+            prepareNodes();
+            prepareLinks();
+            force.nodes(pageNodes)
+                 .links(pageLinks)
+                 .start();
+        });
+
+        makeOption(newDiv, "Collapse", "../images/icon2.png", function() {
+            alert("collapse");
+        });
+
+        makeOption(newDiv, "Edit", "../images/icon2.png", function() {
+            alert("edit");
+        });
+    }
+
+    function showTitlePane(node) {
+        d3.select("#titlePane")
+            .style("left", (node.x + 30) + "px")
+            .style("top", (node.y + 20) + "px")
+            .html(node.value.title)
+            .style("visibility", "visible");
+    }
+
+    function hideTitlePane() {
+        d3.select("#titlePane")
+            .style("visibility", "hidden");
     }
 
     function prepareLinks() {
-        linkElements = linkElements.data(pageLinks)
+        var selection = svg.selectAll(".link").data(pageLinks);
+
+        selection
+            .exit()
+            .remove();
+        selection
             .enter()
             .append("line")
             .attr("class", "link");
@@ -68,8 +128,12 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     function prepareNodes() {
-        nodeElements.data(pageNodes)
-            .enter()
+        var selection = svg.selectAll(".node").data(pageNodes, function(node) {
+            return node.value.url;
+        });
+
+        selection.exit().remove();
+        selection.enter()
             .append("circle")
             .attr("class", "node")
             .attr("r", 16)
@@ -77,65 +141,22 @@ document.addEventListener('DOMContentLoaded', function() {
             .each(function(node) {
                 d3.select(this).classed(node.value.type, true);
             })
-            .on("click", function(node) {
-                clearDetailPane();
-                d3.select(this).classed("selected", true);
-                var newDiv = d3.select("#detailPane").append("div");
-                newDiv.append("p").html("<h2>" + node.value.title + "</h2>");
-                newDiv.append("p").html(node.value.description);
-                newDiv.append("p").html("(" + node.value.url + ")");
-                
-                var removeDiv = newDiv.append("div")
-                    .on("click", function() {
-                        alert("remove");
-                    });
-                removeDiv.append("img")
-                    .attr("src", "../images/icon2.png")
-                    .style("float", "left")
-                    .style("padding-right", "10px");
-                removeDiv.append("p")
-                    .html("Remove");
-
-                var collapseDiv = newDiv.append("div")
-                    .on("click", function() {
-                        alert("collapse");
-                    });
-                collapseDiv.append("img")
-                    .attr("src", "../images/icon2.png")
-                    .style("float", "left")
-                    .style("padding-right", "10px");
-                collapseDiv.append("p")
-                    .html("Collapse");
-
-                var editDiv = newDiv.append("div")
-                    .on("click", function() {
-                        alert("edit");
-                    });
-                editDiv.append("img")
-                    .attr("src", "../images/icon2.png")
-                    .style("float", "left")
-                    .style("padding-right", "10px");
-                editDiv.append("p")
-                    .html("Edit");
-            })
+            .on("click", showDetails)
             .on("dblclick", function(node) {
                 page.openTab(node.value.url);
             })
-            .on("mouseover", function(node) {
-                d3.select("#titlePane")
-                    .style("left", (node.x + 30) + "px")
-                    .style("top", (node.y + 20) + "px")
-                    .html(node.value.title)
-                    .style("visibility", "visible");
-            })
-            .on("mouseout", function(node) {
-                d3.select("#titlePane").style("visibility", "hidden");
-            });
+            .on("mouseover", showTitlePane)
+            .on("mouseout", hideTitlePane);
         nodeElements = svg.selectAll(".node");
     };
 
     prepareLinks();
     prepareNodes();
+
+    function clearDetailPane() {
+        d3.select(".node.selected").classed("selected", false);
+        d3.select("#detailPane").selectAll("div").remove();
+    }
 
     function detailPaneSelected(selection) {
         var selectedDetailPane = false;
@@ -159,14 +180,14 @@ document.addEventListener('DOMContentLoaded', function() {
     d3.select("body").on("dblclick", function () {
         var selected = d3.select(d3.event.target);
         if (!(selected.classed("node") || detailPaneSelected(selected))) {
-            var url = "url" || prompt("Enter a URL");
+            var url = "url" + new Date().getTime() || prompt("Enter a URL");
             if (url) {
                 var title = "title" || prompt("Enter a title");
                 var description = "description" || prompt("Enter a description");
                 page.LinkGraph.addUnreadNode(url, title, description);
-                pageNodes.push(page.LinkGraph.getNode(url));
+                updateGraph();
                 prepareNodes();
-                force.start();
+                force.nodes(pageNodes).start();
             } else {
                 alert("URL required");
             }
