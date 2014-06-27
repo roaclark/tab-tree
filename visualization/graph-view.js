@@ -87,6 +87,16 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .on("dblclick", function(node) {
                 page.openTab(node.value.url);
+            })
+            .on("mouseover", function(node) {
+                d3.select("#titlePane")
+                    .style("left", (node.x + 30) + "px")
+                    .style("top", (node.y + 20) + "px")
+                    .html(node.value.title)
+                    .style("visibility", "visible");
+            })
+            .on("mouseout", function(node) {
+                d3.select("#titlePane").style("visibility", "hidden");
             });
         nodeElements = svg.selectAll(".node");
     };
