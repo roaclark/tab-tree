@@ -15,20 +15,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         pageLinks = [];
-        pageNodes.map(function (node) {
+        pageNodes.forEach(function (node) {
             for (childid in node.childids) {
                 pageLinks.push({source: nodeMapping[node.value.url],
                            target: nodeMapping[childid]});
             }
         });
     }
-
-    function updateGraph() {
-        getNodes();
-        generateLinks();
-    }
-
-    updateGraph();
 
     var width = window.innerWidth - document.getElementById("detailPane").offsetWidth,
         height = window.innerHeight - 50;
@@ -39,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var linkElements = svg.selectAll(".link"),
         nodeElements = svg.selectAll(".node");
 
+    getNodes();
+    generateLinks();
     var force = d3.layout.force()
         .size([width, height])
         .charge(-1200)
@@ -54,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .attr("cy", function(d) { return d.y; });
         })
         .on("end", function() {
-            force.nodes().map(function (node) {
+            force.nodes().forEach(function (node) {
                 node.fixed = true;
             });
         })
@@ -85,21 +80,11 @@ document.addEventListener('DOMContentLoaded', function() {
         makeOption(newDiv, "Remove", "../images/icon2.png", function() {
             page.LinkGraph.removeNode(node.value.url);
             updateGraph();
-            prepareNodes();
-            prepareLinks();
-            force.nodes(pageNodes)
-                 .links(pageLinks)
-                 .start();
         });
 
         makeOption(newDiv, "Collapse", "../images/icon2.png", function() {
             page.LinkGraph.collapseNode(node.value.url);
             updateGraph();
-            prepareNodes();
-            prepareLinks();
-            force.nodes(pageNodes)
-                 .links(pageLinks)
-                 .start();
         });
 
         makeOption(newDiv, "Edit", "../images/icon2.png", function() {
@@ -159,6 +144,22 @@ document.addEventListener('DOMContentLoaded', function() {
     prepareLinks();
     prepareNodes();
 
+    function updateGraph() {
+        getNodes();
+        generateLinks();
+        force.nodes(pageNodes)
+             .links(pageLinks)
+             .start();
+        prepareLinks();
+        prepareNodes();
+    }
+
+    function updateGraphNodes() {
+        getNodes();
+        force.nodes(pageNodes).start();
+        prepareNodes();
+    }
+
     function clearDetailPane() {
         d3.select(".node.selected").classed("selected", false);
         d3.select("#detailPane").selectAll("div").remove();
@@ -191,9 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var title = "title" || prompt("Enter a title");
                 var description = "description" || prompt("Enter a description");
                 page.LinkGraph.addUnreadNode(url, title, description);
-                updateGraph();
-                prepareNodes();
-                force.nodes(pageNodes).start();
+                updateGraphNodes();
             } else {
                 alert("URL required");
             }
@@ -201,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById("icon").onclick = function() {
-        force.nodes().map(function (node) {
+        force.nodes().forEach(function (node) {
             node.fixed = false;
         });
         force.start();
