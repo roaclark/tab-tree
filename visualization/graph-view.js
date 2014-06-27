@@ -41,8 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
         .append("path")
         .attr("d", "M0,-5L10,0L0,5");
 
-    var linkElements = svg.selectAll(".link"),
-        nodeElements = svg.selectAll(".node");
+    svg.append("g").attr("id", "linkg");
+    svg.append("g").attr("id", "nodeg");
+
+    var linkElements = svg.select("#linkg").selectAll(".link"),
+        nodeElements = svg.select("#nodeg").selectAll(".node");
 
     getNodes();
     generateLinks();
@@ -67,6 +70,31 @@ document.addEventListener('DOMContentLoaded', function() {
         .nodes(pageNodes)
         .links(pageLinks)
         .start();
+
+    var shiftKeyEngaged = false;
+    d3.select(window)
+        .on('keydown', function() {
+            if (d3.event.keyCode == 16) {
+                // console.log("shift");
+                shiftKeyEngaged = shiftKeyEngaged ||
+                    nodeElements.call(d3.behavior.drag()
+                        .on('dragstart', function() {
+                            console.log("start");
+                        })
+                        .on('drag', function() {
+                            console.log("drag");
+                        })
+                        .on('dragend', function() {
+                            console.log("finish");
+                        }))
+                      || true;
+            }})
+        .on('keyup', function() {
+            if (d3.event.keyCode == 16) {
+                shiftKeyEngaged = shiftKeyEngaged &&
+                    nodeElements.call(force.drag()) &&
+                    false;
+            }})
 
     function makeOption(container, text, icon, onclick) {
         var optionDiv = container.append("div")
@@ -117,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function prepareLinks() {
-        var selection = svg.selectAll(".link").data(pageLinks);
+        var selection = svg.select("#linkg").selectAll(".link").data(pageLinks);
 
         selection
             .exit()
@@ -127,11 +155,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .append("path")
             .attr("class", "link")
             .attr("marker-end", "url(#arrowhead)");
-        linkElements = svg.selectAll(".link");
+        linkElements = svg.select("#linkg").selectAll(".link");
     };
 
     function prepareNodes() {
-        var selection = svg.selectAll(".node").data(pageNodes, function(node) {
+        var selection = svg.select("#nodeg").selectAll(".node").data(pageNodes, function(node) {
             return node.value.url;
         });
 
@@ -140,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .append("circle")
             .attr("class", "node")
             .attr("r", 16)
-            .call(force.drag)
+            .call(force.drag())
             .each(function(node) {
                 d3.select(this).classed(node.value.type, true);
             })
@@ -150,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .on("mouseover", showTitlePane)
             .on("mouseout", hideTitlePane);
-        nodeElements = svg.selectAll(".node");
+        nodeElements = svg.select("#nodeg").selectAll(".node");
     };
 
     prepareLinks();
