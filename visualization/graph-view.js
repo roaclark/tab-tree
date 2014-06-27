@@ -30,10 +30,15 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr("width", width)
         .attr("height", height);
 
-    svg.append("defs").append("marker")
-        .attr("id", "arrowhead")
+    svg.append("defs")
+        .selectAll("marker")
+        .data([{id: "arrowhead", refX: 23},
+               {id: "fararrowhead", refX: 0}])
+        .enter()
+        .append("marker")
+        .attr("id", function(d) { return d.id })
         .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 23)
+        .attr("refX", function(d) { return d.refX })
         .attr("refY", 0)
         .attr("markerWidth", 8)
         .attr("markerHeight", 8)
@@ -41,11 +46,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .append("path")
         .attr("d", "M0,-5L10,0L0,5");
 
-    svg.append("g").attr("id", "linkg");
-    svg.append("g").attr("id", "nodeg");
-
-    var linkElements = svg.select("#linkg").selectAll(".link"),
-        nodeElements = svg.select("#nodeg").selectAll(".node");
+    var linkElements = svg.append("g").attr("id", "linkg").selectAll(".link"),
+        nodeElements = svg.append("g").attr("id", "nodeg").selectAll(".node");
+        newPathElement = svg.append("path")
+                            .attr("id", "newEdge")
+                            .attr("class", "link")
+                            .attr("marker-end", "url(#fararrowhead)")
+                            .attr("visibility", "hidden");
 
     getNodes();
     generateLinks();
@@ -78,14 +85,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 // console.log("shift");
                 shiftKeyEngaged = shiftKeyEngaged ||
                     nodeElements.call(d3.behavior.drag()
-                        .on('dragstart', function() {
-                            console.log("start");
+                        .on('dragstart', function(node) {
+                            newPathElement
+                                .attr("d", "M" + (node.x) + "," + (node.y))
+                                .attr("visibility", "visible");
                         })
-                        .on('drag', function() {
-                            console.log("drag");
+                        .on('drag', function(node) {
+                            var mouseLoc = d3.mouse(this);
+                            newPathElement
+                                .attr("d", "M" + (node.x) + "," + (node.y) +
+                                           "L" + mouseLoc[0] + "," + mouseLoc[1]);
                         })
-                        .on('dragend', function() {
-                            console.log("finish");
+                        .on('dragend', function(node) {
+                            newPathElement.attr("visibility", "hidden");
+                            var mouseLoc = d3.mouse(this);
+                            nodeElements.each(function (desnode) {
+                                if (Math.sqrt(Math.pow((desnode.x-mouseLoc[0]), 2)
+                                        + (Math.pow((desnode.y-mouseLoc[1]), 2))) < 16) {
+                                    page.LinkGraph.addLink(node.value.url, desnode.value.url);
+                                    updateGraph();
+                                }
+                            })
                         }))
                       || true;
             }})
