@@ -29,6 +29,18 @@ document.addEventListener('DOMContentLoaded', function() {
     var svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height);
+
+    svg.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 23)
+        .attr("refY", 0)
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 8)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5");
+
     var linkElements = svg.selectAll(".link"),
         nodeElements = svg.selectAll(".node");
 
@@ -40,10 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .friction(.8)
         .linkDistance(80)
         .on("tick", function () {
-            linkElements.attr("x1", function(d) { return d.source.x; })
-                        .attr("y1", function(d) { return d.source.y; })
-                        .attr("x2", function(d) { return d.target.x; })
-                        .attr("y2", function(d) { return d.target.y; });
+            linkElements.attr("d", function(d) {
+                return "M" + d.source.x + "," + d.source.y +
+                       "L" + d.target.x + "," + d.target.y; });
 
             nodeElements.attr("cx", function(d) { return d.x; })
                         .attr("cy", function(d) { return d.y; });
@@ -113,8 +124,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .remove();
         selection
             .enter()
-            .append("line")
-            .attr("class", "link");
+            .append("path")
+            .attr("class", "link")
+            .attr("marker-end", "url(#arrowhead)");
         linkElements = svg.selectAll(".link");
     };
 
@@ -187,10 +199,10 @@ document.addEventListener('DOMContentLoaded', function() {
     d3.select("body").on("dblclick", function () {
         var selected = d3.select(d3.event.target);
         if (!(selected.classed("node") || detailPaneSelected(selected))) {
-            var url = "url" + new Date().getTime() || prompt("Enter a URL");
+            var url = prompt("Enter a URL");
             if (url) {
-                var title = "title" || prompt("Enter a title");
-                var description = "description" || prompt("Enter a description");
+                var title = prompt("Enter a title");
+                var description = prompt("Enter a description");
                 page.LinkGraph.addUnreadNode(url, title, description);
                 updateGraphNodes();
             } else {
@@ -203,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
         force.nodes().forEach(function (node) {
             node.fixed = false;
         });
+            console.log(svg[0][0])
         force.start();
     };
 
