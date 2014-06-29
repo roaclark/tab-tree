@@ -28,7 +28,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var svg = d3.select("body").append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .on("click", function () {
+            var selected = d3.select(d3.event.target);
+            if (!(selected.classed("node")) || selected.classed("edge")) {
+                clearDetailPaneAndSelection();
+            }
+        })
+        .on("dblclick", function () {
+            var selected = d3.select(d3.event.target);
+            if (!(selected.classed("node")) || selected.classed("edge")) {
+                var url = prompt("Enter a URL");
+                if (url) {
+                    var title = prompt("Enter a title");
+                    var description = prompt("Enter a description");
+                    page.LinkGraph.addUnreadNode(url, title, description);
+                    updateGraphNodes();
+                } else {
+                    alert("URL required");
+                }
+            }
+        });
 
     svg.append("defs")
         .selectAll("marker")
@@ -82,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
     d3.select(window)
         .on('keydown', function() {
             if (d3.event.keyCode == 16) {
-                // console.log("shift");
                 shiftKeyEngaged = shiftKeyEngaged ||
                     nodeElements.call(d3.behavior.drag()
                         .on('dragstart', function(node) {
@@ -128,27 +147,85 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showDetails(node) {
-        clearDetailPane();
+        clearDetailPaneAndSelection();
         d3.select(this).classed("selected", true);
-        var newDiv = d3.select("#detailPane").append("div");
-        newDiv.append("p").html("<h2>" + node.value.title + "</h2>");
-        newDiv.append("p").html(node.value.description);
-        newDiv.append("p").html("(" + node.value.url + ")");
-        newDiv.append("p").html("<br><hr>");
+        var detailDiv = d3.select("#detailPane").append("div");
+        detailDiv.append("p").append("h2").html(node.value.title);
+        detailDiv.append("p").html(node.value.description);
+        detailDiv.append("p").html("(" + node.value.url + ")");
+        detailDiv.append("br");
+        detailDiv.append("hr");
         
-        makeOption(newDiv, "Remove", "../images/icon2.png", function() {
+        makeOption(detailDiv, "Remove", "../images/icon2.png", function() {
+            clearDetailPane()
             page.LinkGraph.removeNode(node.value.url);
             updateGraph();
         });
 
-        makeOption(newDiv, "Collapse", "../images/icon2.png", function() {
+        makeOption(detailDiv, "Collapse", "../images/icon2.png", function() {
+            clearDetailPane()
             page.LinkGraph.collapseNode(node.value.url);
             updateGraph();
         });
 
-        makeOption(newDiv, "Edit", "../images/icon2.png", function() {
-            alert("edit");
+        makeOption(detailDiv, "Edit", "../images/icon2.png", function() {
+            clearDetailPane()
+            var form = d3.select("#detailPane").append("form")
+                .property("name", "editForm");
+
+            form.append("label").html("Title");
+            form.append("br");
+            form.append("input").property("type", "text").property("name", "title");
+            form.append("br");
+            form.append("label").html("Description");
+            form.append("br");
+            form.append("textarea").property("name", "description");
+            form.append("br");
+            form.append("input").property("type", "radio")
+                                .property("name", "type")
+                                .property("value", "resource");
+            form.append("label").html("Resource");
+            form.append("br");
+            form.append("input").property("type", "radio")
+                                .property("name", "type")
+                                .property("value", "support");
+            form.append("label").html("Support");
+            form.append("br");
+            form.append("input").property("type", "radio")
+                                .property("name", "type")
+                                .property("value", "search");
+            form.append("label").html("Search");
+            form.append("br");
+            form.append("input").property("type", "radio")
+                                .property("name", "type")
+                                .property("value", "unread");
+            form.append("label").html("Unread");
+            form.append("br");
+            form.append("input").property("type", "submit").property("value", "Update");
+            form.append("input").property("type", "reset");
+
+            form.on("submit", function() {
+                    node.value.title = document.editForm.title.value || node.value.title;
+                    node.value.description = document.editForm.description.value || node.value.description;
+                    node.value.type = document.editForm.type.value || node.value.type;
+
+                    nodeElements.each(updateNodeClass);
+                    clearDetailPaneAndSelection();
+                    // This line is necessary for chrome compatibility.
+                    // Without this line, the form is still sent despite returning false.
+                    event.returnValue=false;
+                    return false;
+                })
         });
+    }
+
+    function clearDetailPaneAndSelection() {
+        clearDetailPane();
+        d3.select(".node.selected").classed("selected", false);
+    }
+
+    function clearDetailPane() {
+        d3.select("#detailPane").selectAll("*").remove();
     }
 
     function showTitlePane(node) {
@@ -162,6 +239,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideTitlePane() {
         d3.select("#titlePane")
             .style("visibility", "hidden");
+    }
+
+    function updateNodeClass(node) {
+        for (type in {"unread": true,
+                      "support": true,
+                      "resource": true,
+                      "search": true}) {
+            d3.select(this).classed(type, false);
+        }
+        d3.select(this).classed(node.value.type, true);
     }
 
     function prepareLinks() {
@@ -189,9 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("class", "node")
             .attr("r", 16)
             .call(force.drag())
-            .each(function(node) {
-                d3.select(this).classed(node.value.type, true);
-            })
+            .each(updateNodeClass)
             .on("click", showDetails)
             .on("dblclick", function(node) {
                 page.openTab(node.value.url);
@@ -220,50 +305,10 @@ document.addEventListener('DOMContentLoaded', function() {
         prepareNodes();
     }
 
-    function clearDetailPane() {
-        d3.select(".node.selected").classed("selected", false);
-        d3.select("#detailPane").selectAll("div").remove();
-    }
-
-    function detailPaneSelected(selection) {
-        var selectedDetailPane = false;
-        var nodeSelection = selection.node();
-        while(!selectedDetailPane && nodeSelection != null) {
-            if (nodeSelection.id == "detailPane") {
-                selectedDetailPane = true;
-            } else {
-                nodeSelection = nodeSelection.parentNode;
-            }
-        }
-        return selectedDetailPane;
-    }
-
-    d3.select("body").on("click", function () {
-        var selected = d3.select(d3.event.target);
-        if (!(selected.classed("node") || detailPaneSelected(selected))) {
-            clearDetailPane();
-        }
-    });
-    d3.select("body").on("dblclick", function () {
-        var selected = d3.select(d3.event.target);
-        if (!(selected.classed("node") || detailPaneSelected(selected))) {
-            var url = prompt("Enter a URL");
-            if (url) {
-                var title = prompt("Enter a title");
-                var description = prompt("Enter a description");
-                page.LinkGraph.addUnreadNode(url, title, description);
-                updateGraphNodes();
-            } else {
-                alert("URL required");
-            }
-        }
-    });
-
     document.getElementById("icon").onclick = function() {
         force.nodes().forEach(function (node) {
             node.fixed = false;
         });
-            console.log(svg[0][0])
         force.start();
     };
 
