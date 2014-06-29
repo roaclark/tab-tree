@@ -119,10 +119,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             newPathElement.attr("visibility", "hidden");
                             var mouseLoc = d3.mouse(this);
                             nodeElements.each(function (desnode) {
-                                if (Math.sqrt(Math.pow((desnode.x-mouseLoc[0]), 2)
-                                        + (Math.pow((desnode.y-mouseLoc[1]), 2))) < 16) {
-                                    page.LinkGraph.addLink(node.value.url, desnode.value.url);
-                                    updateGraph();
+                                if (!(node == desnode)) {
+                                    if (Math.sqrt(Math.pow((desnode.x-mouseLoc[0]), 2)
+                                            + (Math.pow((desnode.y-mouseLoc[1]), 2))) < 16) {
+                                        page.LinkGraph.addLink(node.value.url, desnode.value.url);
+                                        updateGraph();
+                                    }
                                 }
                             })
                         }))
