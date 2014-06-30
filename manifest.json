@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
 
-    "name": "Research Tree",
+    "name": "TabTree",
     "description": "Tab workflow tracker",
     "version": "1.0",
 
