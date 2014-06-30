@@ -14,7 +14,10 @@
     },
 
     "background": {
-        "scripts": ["model/graph-structure.js", "model/link-graph.js", "background.js"]
+        "scripts": ["lib/jquery-1.11.1.min.js",
+                    "model/graph-structure.js",
+                    "model/link-graph.js",
+                    "background.js"]
     },
 
     "permissions": [
