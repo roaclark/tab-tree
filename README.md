@@ -42,10 +42,10 @@ Each type of page is represented with a different color:
 
 The following user interactions are available:
 
-* Shift + drag - Creates a new link between the source and destination nodes. (unimplemented)
+* Shift + drag - Creates a new link between the source and destination nodes.
 * Drag - Moves a node.
-* Hover - Displays the node title. (unimplemented)
-* Click on node - Displays page info in the panel on the right side. Also includes editing options. (Unfinished)
+* Hover - Displays the node title.
+* Click on node - Displays page info in the panel on the right side. Also includes editing options.
 * Click on background - Clears information panel.
 * Double click on node - Opens the page in a new tab.
 * Double click on background - Adds a new unread node. Prompts the user for the url, title, and description.
