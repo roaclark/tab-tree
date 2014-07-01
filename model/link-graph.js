@@ -1,47 +1,51 @@
-LinkGraphCons = function() {
+function LinkGraphCons() {
     var graph = new Graph();
 
-    LinkInfo = function(type, url, title, description) {
+    function LinkInfo(type, url, title, description) {
         return {
             type: type,
             url: url,
             title: title,
             description: description
         }
-    }
+    };
 
 
     /* Adding nodes */
 
-    this.addSearchNode = function(url, search, parent) {
+    this.addSearchNode = function addSearchNode(url, search, parent) {
         var info = new LinkInfo("search", url, "Search for " + search, "Search page for " + search);
         graph.addNode(url, info);
         if (parent) {
             graph.addEdge(parent, url);
         }
-    }
+        this.syncLocal();
+    };
 
-    this.addUnreadNode = function(url, title, description, other, parent) {
+    this.addUnreadNode = function addUnreadNode(url, title, description, other, parent) {
         var info = new LinkInfo("unread", url, title || "Untitled", description || "No description available");
         graph.addNode(url, info);
         this.updateInfo(url, other || {})
         if (parent) {
             graph.addEdge(parent, url);
         }
-    }
+        this.syncLocal();
+    };
 
-    this.addLink = function(from, to) {
+    this.addLink = function addLink(from, to) {
         graph.addEdge(from, to);
-    }
+        this.syncLocal();
+    };
 
 
     /* Removing nodes */
 
-    this.removeNode = function(url) {
+    this.removeNode = function removeNode(url) {
         graph.removeNode(url);
-    }
+        this.syncLocal();
+    };
 
-    this.collapseNode = function(url) {
+    this.collapseNode = function collapseNode(url) {
         var node = graph.getNode(url);
         for (var parentid in node.parentids) {
             for (var childid in node.childids) {
@@ -51,63 +55,71 @@ LinkGraphCons = function() {
             }
         }
         graph.removeNode(url);
-    }
+        this.syncLocal();
+    };
 
-    this.removeLink = function(from, to) {
+    this.removeLink = function removeLink(from, to) {
         graph.removeEdge(from, to);
-    }
+        this.syncLocal();
+    };
 
 
     /* Updating nodes */
 
-    this.markUnread = function(url) {
+    this.markUnread = function markUnread(url) {
         graph.getNode(url).value.type = "unread";
-    }
+        this.syncLocal();
+    };
 
-    this.markResource = function(url) {
+    this.markResource = function markResource(url) {
         graph.getNode(url).value.type = "resource";
-    }
+        this.syncLocal();
+    };
 
-    this.markSupport = function(url) {
+    this.markSupport = function markSupport(url) {
         graph.getNode(url).value.type = "support";
-    }
+        this.syncLocal();
+    };
 
-    this.setTitle = function(url, title) {
+    this.setTitle = function setTitle(url, title) {
         if (title) {
             graph.getNode(url).value.title = title;
         }
-    }
+        this.syncLocal();
+    };
 
-    this.setDescription = function(url, description) {
+    this.setDescription = function setDescription(url, description) {
         if (description) {
             graph.getNode(url).value.description = description;
         }
-    }
+        this.syncLocal();
+    };
 
-    this.updateInfo = function(url, items) {
+    this.updateInfo = function updateInfo(url, items) {
         var node = graph.getNode(url);
         for (var item in items) {
             node.value[item] = items[item];
         }
-    }
+        this.syncLocal();
+    };
 
 
     /* Retrieving nodes */
 
-    this.getUrls = function() {
+    this.getUrls = function getUrls() {
         return graph.getNodeIds();
-    }
+    };
 
-    this.getNodes = function() {
+    this.getNodes = function getNodes() {
         var nodes = [];
         var urls = graph.getNodeIds();
         for (var i = 0; i < urls.length; i++) {
             nodes.push(graph.getNode(urls[i]));
         }
         return nodes;
-    }
+    };
 
-    this.getNodesOfType = function(type) {
+    this.getNodesOfType = function getNodesOfType(type) {
         var nodes = [];
         var urls = graph.getNodeIds();
         for (var i = 0; i < urls.length; i++) {
@@ -117,27 +129,44 @@ LinkGraphCons = function() {
             }
         }
         return nodes;
-    }
+    };
 
-    this.getNode = function(url) {
+    this.getNode = function getNode(url) {
         return graph.getNode(url);
-    }
+    };
 
-    this.getParentsOfNode = function(url) {
+    this.getParentsOfNode = function getParentsOfNode(url) {
         var nodes = [];
         for (var url in graph.getNode(url).parentids) {
             nodes.push(graph.getNode(url));
         }
         return nodes;
-    }
+    };
 
-    this.getChildrenOfNode = function(url) {
+    this.getChildrenOfNode = function getChildrenOfNode(url) {
         var nodes = [];
         for (var url in graph.getNode(url).childids) {
             nodes.push(graph.getNode(url));
         }
         return nodes;
-    }
-}
+    };
+
+
+    /* Autosave functionality */
+
+    this.syncLocal = function syncLocal() {
+        chrome.storage.local.set({"autosave": graph.getNodeSet()});
+    };
+
+    this.loadLocal = function loadLocal() {
+        chrome.storage.local.get("autosave", function (obj) {
+            if (obj) {
+                graph = new Graph(obj.autosave);
+            }
+        });
+    };
+
+    this.loadLocal();
+};
 
 LinkGraph = new LinkGraphCons();

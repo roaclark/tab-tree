@@ -1,5 +1,5 @@
-Graph = function() {
-    var nodeSet = {};
+Graph = function(nodeSet) {
+    nodeSet = nodeSet || {};
 
     Node = function(id, value) {
         return {
@@ -11,6 +11,10 @@ Graph = function() {
 
     this.getNodeIds = function() {
         return Object.keys(nodeSet);
+    }
+
+    this.getNodeSet = function() {
+        return nodeSet;
     }
 
     this.getNode = function(id) {
@@ -40,5 +44,9 @@ Graph = function() {
     this.removeEdge = function(sourceid, sinkid) {
         delete this.getNode(sourceid).childids[sinkid];
         delete this.getNode(sinkid).parentids[sourceid];
+    }
+
+    this.removeAll = function() {
+        nodeSet = {};
     }
 }
