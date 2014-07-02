@@ -25,20 +25,13 @@ Context menus are used to conveniently add pages from a tab. The following conte
 * "Research Tree / Remove Page From Tree" (when page is in tree) - Removes the page in the active tab from the tree.
 * "Research Tree / Update page / Change title" (when page is in tree) - Updates the value stored as the title for the page in the active tab.
 * "Research Tree / Update page / Change description" (when page is in tree) - Updates the value stored as the description for the page in the active tab.
-* "Research Tree / Mark page as..." (when page is in tree) - Updates the page type.
+* "Research Tree / Change color..." (when page is in tree) - Changes color of the page node.
 * "Research Tree / Search from this page" (when page is in tree) - Prompts the user for a search query. Creates a new search page node in the tree to represent the search. Opens a Google search for the query in a new tab.
 * "Add this link as a child page" (when page is in tree and link is selected) - Adds the link destination to the tree as a new page node. The node is marked as unread with no title or description. Also adds an edge from the page in the active tab to the newly created page.
 
 ###Application
 
 The application is used to visualize the tree. Each node represents one page as defined through context menus or the application itself. Edges represent links between pages.
-
-Each type of page is represented with a different color:
-
-* Blue - Search page
-* Red - Resource page
-* Yellow - Support page.
-* Gray - Unread
 
 The following user interactions are available:
 
