@@ -38,14 +38,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .on("dblclick", function () {
             var selected = d3.select(d3.event.target);
             if (!(selected.classed("node")) || selected.classed("link")) {
-                var url = prompt("Enter a URL");
-                if (url) {
-                    var title = prompt("Enter a title");
+                var title = prompt("Enter a title");
+                if (title && !page.LinkGraph.getNode(title)) {
                     var description = prompt("Enter a description");
-                    page.LinkGraph.addNode(url, title, description);
+                    page.LinkGraph.addNode(title, title, description, "#fe2");
                     updateGraphNodes();
                 } else {
-                    alert("URL required");
+                    alert("Title must be unique and nonempty");
                 }
             }
         });
@@ -243,9 +242,12 @@ document.addEventListener('DOMContentLoaded', function() {
             form.append("input").property("type", "reset");
 
             form.on("submit", function() {
-                    node.value.title = document.editForm.title.value || node.value.title;
-                    node.value.description = document.editForm.description.value || node.value.description;
-                    node.value.color = document.editForm.color.value || node.value.color;
+                    page.LinkGraph.setTitle(node.value.url,
+                            document.editForm.title.value || node.value.title);
+                    page.LinkGraph.setDescription(node.value.url,
+                            document.editForm.description.value || node.value.description);
+                    page.LinkGraph.changeColor(node.value.url,
+                            document.editForm.color.value || node.value.color);
 
                     clearDetailPaneAndSelection();
                     nodeElements.attr("fill", function (d) {return d.value.color})

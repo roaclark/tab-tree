@@ -122,7 +122,7 @@ createContextMenus = function (currentTabInGraph) {
                 if (LinkGraph.getNode(info.linkUrl)) {
                     LinkGraph.addLink(info.pageUrl, info.linkUrl);
                 } else {
-                    LinkGraph.addNode(info.linkUrl, null, null, null, info.pageUrl);
+                    LinkGraph.addNode(info.linkUrl, null, null, null, null, info.pageUrl);
                 }
             }});
     } else {

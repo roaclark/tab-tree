@@ -13,8 +13,8 @@ function LinkGraphCons() {
 
     /* Adding nodes */
 
-    this.addNode = function addNode(url, title, description, other, parent) {
-        var info = new LinkInfo(url, title || "Untitled", description || "No description available", "#ccc");
+    this.addNode = function addNode(url, title, description, color, other, parent) {
+        var info = new LinkInfo(url, title || "Untitled", description || "No description available", color || "#ccc");
         graph.addNode(url, info);
         this.updateInfo(url, other || {})
         if (parent) {
