@@ -31,18 +31,18 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr("height", height)
         .on("click", function () {
             var selected = d3.select(d3.event.target);
-            if (!(selected.classed("node")) || selected.classed("edge")) {
+            if (!(selected.classed("node")) || selected.classed("link")) {
                 clearDetailPaneAndSelection();
             }
         })
         .on("dblclick", function () {
             var selected = d3.select(d3.event.target);
-            if (!(selected.classed("node")) || selected.classed("edge")) {
+            if (!(selected.classed("node")) || selected.classed("link")) {
                 var url = prompt("Enter a URL");
                 if (url) {
                     var title = prompt("Enter a title");
                     var description = prompt("Enter a description");
-                    page.LinkGraph.addUnreadNode(url, title, description);
+                    page.LinkGraph.addNode(url, title, description);
                     updateGraphNodes();
                 } else {
                     alert("URL required");
@@ -186,42 +186,58 @@ document.addEventListener('DOMContentLoaded', function() {
             form.append("textarea").property("name", "description")
                                    .property("value", node.value.description);
             form.append("br");
-            var resourceRadio = form.append("input")
-                                    .property("type", "radio")
-                                    .property("name", "type")
-                                    .property("value", "resource");
-            if (node.value.type == "resource") {
-                resourceRadio.property("checked", true);
-            }
-            form.append("label").html("Resource");
+
+            form.append("input")
+                .property("type", "radio")
+                .property("name", "color")
+                .property("value", "#e00");
+            form.append("label").html("Red");
             form.append("br");
-            var supportRadio = form.append("input")
-                                   .property("type", "radio")
-                                   .property("name", "type")
-                                   .property("value", "support");
-            if (node.value.type == "support") {
-                supportRadio.property("checked", true);
-            }
-            form.append("label").html("Support");
+
+            form.append("input")
+               .property("type", "radio")
+               .property("name", "color")
+               .property("value", "#f70");
+            form.append("label").html("Orange");
             form.append("br");
-            var searchRadio = form.append("input")
-                                  .property("type", "radio")
-                                  .property("name", "type")
-                                  .property("value", "search");
-            if (node.value.type == "search") {
-                searchRadio.property("checked", true);
-            }
-            form.append("label").html("Search");
+
+            form.append("input")
+                .property("type", "radio")
+                .property("name", "color")
+                .property("value", "#fe2");
+            form.append("label").html("Yellow");
             form.append("br");
-            var unreadRadio = form.append("input")
-                                  .property("type", "radio")
-                                  .property("name", "type")
-                                  .property("value", "unread");
-            if (node.value.type == "unread") {
-                unreadRadio.property("checked", true);
-            }
-            form.append("label").html("Unread");
+
+            form.append("input")
+                .property("type", "radio")
+                .property("name", "color")
+                .property("value", "#3d0");
+            form.append("label").html("Green");
             form.append("br");
+
+            form.append("input")
+                .property("type", "radio")
+                .property("name", "color")
+                .property("value", "#3ae");
+            form.append("label").html("Blue");
+            form.append("br");
+
+            form.append("input")
+                .property("type", "radio")
+                .property("name", "color")
+                .property("value", "#a0d");
+            form.append("label").html("Purple");
+            form.append("br");
+
+            form.append("input")
+                .property("type", "radio")
+                .property("name", "color")
+                .property("value", "#ccc");
+            form.append("label").html("Gray");
+            form.append("br");
+
+            form.select("[value=\"" + node.value.color + "\"]").attr("checked", true);
+
             form.append("input").property("type", "submit")
                                 .property("value", "Update");
             form.append("input").property("type", "reset");
@@ -229,10 +245,11 @@ document.addEventListener('DOMContentLoaded', function() {
             form.on("submit", function() {
                     node.value.title = document.editForm.title.value || node.value.title;
                     node.value.description = document.editForm.description.value || node.value.description;
-                    node.value.type = document.editForm.type.value || node.value.type;
+                    node.value.color = document.editForm.color.value || node.value.color;
 
-                    nodeElements.each(updateNodeClass);
                     clearDetailPaneAndSelection();
+                    nodeElements.attr("fill", function (d) {return d.value.color})
+
                     // This line is necessary for chrome compatibility.
                     // Without this line, the form is still sent despite returning false.
                     event.returnValue=false;
@@ -263,16 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .style("visibility", "hidden");
     }
 
-    function updateNodeClass(node) {
-        for (type in {"unread": true,
-                      "support": true,
-                      "resource": true,
-                      "search": true}) {
-            d3.select(this).classed(type, false);
-        }
-        d3.select(this).classed(node.value.type, true);
-    }
-
     function prepareLinks() {
         var selection = svg.select("#linkg").selectAll(".link").data(pageLinks);
 
@@ -297,8 +304,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .append("circle")
             .attr("class", "node")
             .attr("r", 16)
+            .attr("fill", function (d) {return d.value.color})
             .call(force.drag())
-            .each(updateNodeClass)
             .on("click", showDetails)
             .on("dblclick", function(node) {
                 page.openTab(node.value.url);

@@ -52,26 +52,50 @@ createContextMenus = function (currentTabInGraph) {
                             }));
                     });
                 var markPage = chrome.contextMenus.create(createPageMenuItem(
-                        'Mark page as...',
+                        'Change color...',
                         root),
                     function() {
                         chrome.contextMenus.create(createPageMenuItem(
-                            'Resource',
+                            'Red',
                             markPage,
                             function(info, tab) {
-                                LinkGraph.markResource(info.pageUrl);
+                                LinkGraph.changeColor(info.pageUrl, "#e00");
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
-                            'Support',
+                            'Orange',
                             markPage,
                             function(info, tab) {
-                                LinkGraph.markSupport(info.pageUrl);
+                                LinkGraph.changeColor(info.pageUrl, "#f70");
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
-                            'Unread',
+                            'Yellow',
                             markPage,
                             function(info, tab) {
-                                LinkGraph.markUnread(info.pageUrl);
+                                LinkGraph.changeColor(info.pageUrl, "#fe2");
+                            }));
+                        chrome.contextMenus.create(createPageMenuItem(
+                            'Green',
+                            markPage,
+                            function(info, tab) {
+                                LinkGraph.changeColor(info.pageUrl, "#3d0");
+                            }));
+                        chrome.contextMenus.create(createPageMenuItem(
+                            'Blue',
+                            markPage,
+                            function(info, tab) {
+                                LinkGraph.changeColor(info.pageUrl, "#3ae");
+                            }));
+                        chrome.contextMenus.create(createPageMenuItem(
+                            'Purple',
+                            markPage,
+                            function(info, tab) {
+                                LinkGraph.changeColor(info.pageUrl, "#a0d");
+                            }));
+                        chrome.contextMenus.create(createPageMenuItem(
+                            'Gray',
+                            markPage,
+                            function(info, tab) {
+                                LinkGraph.changeColor(info.pageUrl, "#ccc");
                             }));
                     });
                 chrome.contextMenus.create({
@@ -98,7 +122,7 @@ createContextMenus = function (currentTabInGraph) {
                 if (LinkGraph.getNode(info.linkUrl)) {
                     LinkGraph.addLink(info.pageUrl, info.linkUrl);
                 } else {
-                    LinkGraph.addUnreadNode(info.linkUrl, null, null, null, info.pageUrl);
+                    LinkGraph.addNode(info.linkUrl, null, null, null, info.pageUrl);
                 }
             }});
     } else {
@@ -106,7 +130,7 @@ createContextMenus = function (currentTabInGraph) {
             'Add page to tree',
             root,
             function(info, tab) {
-                LinkGraph.addUnreadNode(info.pageUrl, tab.title);
+                LinkGraph.addNode(info.pageUrl, tab.title);
                 createContextMenus(true);
             }));
     }

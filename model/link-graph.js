@@ -1,31 +1,31 @@
 function LinkGraphCons() {
     var graph = new Graph();
 
-    function LinkInfo(type, url, title, description) {
+    function LinkInfo(url, title, description, color) {
         return {
-            type: type,
             url: url,
             title: title,
-            description: description
+            description: description,
+            color: color
         }
     };
 
 
     /* Adding nodes */
 
-    this.addSearchNode = function addSearchNode(url, search, parent) {
-        var info = new LinkInfo("search", url, "Search for " + search, "Search page for " + search);
+    this.addNode = function addNode(url, title, description, other, parent) {
+        var info = new LinkInfo(url, title || "Untitled", description || "No description available", "#ccc");
         graph.addNode(url, info);
+        this.updateInfo(url, other || {})
         if (parent) {
             graph.addEdge(parent, url);
         }
         this.syncLocal();
     };
 
-    this.addUnreadNode = function addUnreadNode(url, title, description, other, parent) {
-        var info = new LinkInfo("unread", url, title || "Untitled", description || "No description available");
+    this.addSearchNode = function addSearchNode(url, search, parent) {
+        var info = new LinkInfo(url, "Search for " + search, "Search page for " + search, "#3ae");
         graph.addNode(url, info);
-        this.updateInfo(url, other || {})
         if (parent) {
             graph.addEdge(parent, url);
         }
@@ -66,18 +66,8 @@ function LinkGraphCons() {
 
     /* Updating nodes */
 
-    this.markUnread = function markUnread(url) {
-        graph.getNode(url).value.type = "unread";
-        this.syncLocal();
-    };
-
-    this.markResource = function markResource(url) {
-        graph.getNode(url).value.type = "resource";
-        this.syncLocal();
-    };
-
-    this.markSupport = function markSupport(url) {
-        graph.getNode(url).value.type = "support";
+    this.changeColor = function changeColor(url, color) {
+        graph.getNode(url).value.color = color;
         this.syncLocal();
     };
 
@@ -115,18 +105,6 @@ function LinkGraphCons() {
         var urls = graph.getNodeIds();
         for (var i = 0; i < urls.length; i++) {
             nodes.push(graph.getNode(urls[i]));
-        }
-        return nodes;
-    };
-
-    this.getNodesOfType = function getNodesOfType(type) {
-        var nodes = [];
-        var urls = graph.getNodeIds();
-        for (var i = 0; i < urls.length; i++) {
-            node = graph.getNode(urls[i])
-            if (node.value.type == type) {
-                nodes.push(node);
-            }
         }
         return nodes;
     };

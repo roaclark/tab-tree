@@ -64,25 +64,8 @@ p {
 
 .node {
     cursor: move;
-    fill: #ccc;
     stroke: #000;
     stroke-width: 1.5px;
-}
-
-.node.search {
-    fill: #3ae;
-}
-
-.node.resource {
-    fill: #d11;
-}
-
-.node.support {
-    fill: #ed2;
-}
-
-.node.support {
-    fill: #ed2;
 }
 
 .node.selected {
