@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function makeOption(container, text, icon, onclick) {
         var optionDiv = container.append("div")
             .classed("nodeOption", true)
-            .on("click", onclick);
+            .on("click", onclick);  
         optionDiv.append("img")
             .classed("nodeOptionIcon", true)
             .attr("src", icon);
@@ -177,33 +177,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
             form.append("label").html("Title");
             form.append("br");
-            form.append("input").property("type", "text").property("name", "title");
+            form.append("input").property("type", "text")
+                                .property("name", "title")
+                                .property("value", node.value.title);
             form.append("br");
             form.append("label").html("Description");
             form.append("br");
-            form.append("textarea").property("name", "description");
+            form.append("textarea").property("name", "description")
+                                   .property("value", node.value.description);
             form.append("br");
-            form.append("input").property("type", "radio")
-                                .property("name", "type")
-                                .property("value", "resource");
+            var resourceRadio = form.append("input")
+                                    .property("type", "radio")
+                                    .property("name", "type")
+                                    .property("value", "resource");
+            if (node.value.type == "resource") {
+                resourceRadio.property("checked", true);
+            }
             form.append("label").html("Resource");
             form.append("br");
-            form.append("input").property("type", "radio")
-                                .property("name", "type")
-                                .property("value", "support");
+            var supportRadio = form.append("input")
+                                   .property("type", "radio")
+                                   .property("name", "type")
+                                   .property("value", "support");
+            if (node.value.type == "support") {
+                supportRadio.property("checked", true);
+            }
             form.append("label").html("Support");
             form.append("br");
-            form.append("input").property("type", "radio")
-                                .property("name", "type")
-                                .property("value", "search");
+            var searchRadio = form.append("input")
+                                  .property("type", "radio")
+                                  .property("name", "type")
+                                  .property("value", "search");
+            if (node.value.type == "search") {
+                searchRadio.property("checked", true);
+            }
             form.append("label").html("Search");
             form.append("br");
-            form.append("input").property("type", "radio")
-                                .property("name", "type")
-                                .property("value", "unread");
+            var unreadRadio = form.append("input")
+                                  .property("type", "radio")
+                                  .property("name", "type")
+                                  .property("value", "unread");
+            if (node.value.type == "unread") {
+                unreadRadio.property("checked", true);
+            }
             form.append("label").html("Unread");
             form.append("br");
-            form.append("input").property("type", "submit").property("value", "Update");
+            form.append("input").property("type", "submit")
+                                .property("value", "Update");
             form.append("input").property("type", "reset");
 
             form.on("submit", function() {
