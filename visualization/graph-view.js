@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var title = prompt("Enter a title");
                 if (title && !page.LinkGraph.getNode(title)) {
                     var description = prompt("Enter a description");
-                    page.LinkGraph.addNode(title, title, description, "#fe2");
+                    page.LinkGraph.addOrganizationNode(title, description);
                     updateGraphNodes();
                 } else {
                     alert("Title must be unique and nonempty");
@@ -307,6 +307,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("class", "node")
             .attr("r", 16)
             .attr("fill", function (d) {return d.value.color})
+            .attr("stroke-dasharray", function (d) {
+                if (d.value.organization) {
+                    return "4 2";
+                } else {
+                    return "1 0";
+                }
+            })
             .call(force.drag())
             .on("click", showDetails)
             .on("dblclick", function(node) {

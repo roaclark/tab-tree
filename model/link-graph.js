@@ -23,6 +23,14 @@ function LinkGraphCons() {
         this.syncLocal();
     };
 
+    this.addOrganizationNode = function addOrganizationNode(title, description, color, other) {
+        var info = new LinkInfo(title, title, description || "No description available", color || "#fff");
+        graph.addNode(title, info);
+        this.updateInfo(title, {organization: true});
+        this.updateInfo(title, other || {})
+        this.syncLocal();
+    };
+
     this.addSearchNode = function addSearchNode(url, search, parent) {
         var info = new LinkInfo(url, "Search for " + search, "Search page for " + search, "#3ae");
         graph.addNode(url, info);

@@ -41,6 +41,6 @@ The following user interactions are available:
 * Click on node - Displays page info in the panel on the right side. Also includes editing options.
 * Click on background - Clears information panel.
 * Double click on node - Opens the page in a new tab.
-* Double click on background - Adds a new organization node. Prompts the user for the title and description. Organization nodes are yellow by default.
+* Double click on background - Adds a new organization node. Prompts the user for the title and description. Organization nodes have dashed outlines and are yellow by default.
 
 The icon in the upper left corner triggers automatic layout adjustment.
