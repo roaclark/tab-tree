@@ -92,6 +92,12 @@ createContextMenus = function (currentTabInGraph) {
                                 LinkGraph.changeColor(info.pageUrl, "#a0d");
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
+                            'White',
+                            markPage,
+                            function(info, tab) {
+                                LinkGraph.changeColor(info.pageUrl, "#fff");
+                            }));
+                        chrome.contextMenus.create(createPageMenuItem(
                             'Gray',
                             markPage,
                             function(info, tab) {

@@ -231,6 +231,13 @@ document.addEventListener('DOMContentLoaded', function() {
             form.append("input")
                 .property("type", "radio")
                 .property("name", "color")
+                .property("value", "#fff");
+            form.append("label").html("White");
+            form.append("br");
+
+            form.append("input")
+                .property("type", "radio")
+                .property("name", "color")
                 .property("value", "#ccc");
             form.append("label").html("Gray");
             form.append("br");
