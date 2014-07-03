@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function() {
     var page = chrome.extension.getBackgroundPage();
 
     var pageNodes = [],
@@ -99,22 +99,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var shiftKeyEngaged = false;
     d3.select(window)
-        .on('keydown', function() {
+        .on("keydown", function() {
             if (d3.event.keyCode == 16) {
                 shiftKeyEngaged = shiftKeyEngaged ||
                     nodeElements.call(d3.behavior.drag()
-                        .on('dragstart', function(node) {
+                        .on("dragstart", function(node) {
                             newPathElement
                                 .attr("d", "M" + (node.x) + "," + (node.y))
                                 .attr("visibility", "visible");
                         })
-                        .on('drag', function(node) {
+                        .on("drag", function(node) {
                             var mouseLoc = d3.mouse(this);
                             newPathElement
                                 .attr("d", "M" + (node.x) + "," + (node.y) +
                                            "L" + mouseLoc[0] + "," + mouseLoc[1]);
                         })
-                        .on('dragend', function(node) {
+                        .on("dragend", function(node) {
                             newPathElement.attr("visibility", "hidden");
                             var mouseLoc = d3.mouse(this);
                             nodeElements.each(function (desnode) {
@@ -128,8 +128,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             })
                         }))
                       || true;
+            } else if (d3.event.keyCode == 46) {
+                d3.select(".node.selected").each(function (d) {
+                    page.LinkGraph.removeNode(d.value.url);
+                });
+                updateGraph();
             }})
-        .on('keyup', function() {
+        .on("keyup", function() {
             if (d3.event.keyCode == 16) {
                 shiftKeyEngaged = shiftKeyEngaged &&
                     nodeElements.call(force.drag()) &&
@@ -144,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .classed("nodeOptionIcon", true)
             .attr("src", icon);
         optionDiv.append("p")
-            .html(text);
+            .html(text)
     }
 
     function showDetails(node) {

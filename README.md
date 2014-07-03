@@ -42,5 +42,6 @@ The following user interactions are available:
 * Click on background - Clears information panel.
 * Double click on node - Opens the page in a new tab.
 * Double click on background - Adds a new organization node. Prompts the user for the title and description. Organization nodes have dashed outlines and are yellow by default.
+* Delete - Removes any selected nodes from the graph.
 
 The icon in the upper left corner triggers automatic layout adjustment.
