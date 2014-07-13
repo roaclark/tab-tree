@@ -68,6 +68,6 @@ p {
     stroke-width: 1.5px;
 }
 
-.node.selected {
+.selected {
     stroke-width: 4px;
 }

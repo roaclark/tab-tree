@@ -19,7 +19,9 @@ function generateLinks() {
     graphNodes.forEach(function (node) {
         for (childid in node.childids) {
             graphLinks.push({source: nodeMapping[node.value.url],
-                       target: nodeMapping[childid]});
+                       target: nodeMapping[childid],
+                       sourceUrl: node.value.url,
+                       targetUrl: childid});
         }
     });
 }
@@ -34,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("height", height)
         .on("click", function () {
             var selected = d3.select(d3.event.target);
-            if (!(selected.classed("node")) || selected.classed("link")) {
+            if (!((selected.classed("node")) || selected.classed("link"))) {
                 clearDetailPaneAndSelection();
             }
         })
@@ -54,25 +56,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
     svg.append("defs")
         .selectAll("marker")
-        .data([{id: "arrowhead", refX: 23},
-               {id: "fararrowhead", refX: 0}])
+        .data([{id: "normalarrowhead", refX: 23, path: "M0,-5L10,0L0,5"},
+               {id: "fararrowhead", refX: 0, path: "M0,-5L10,0L0,5"},
+               {id: "selectedarrowhead", refX: 8, path: "M0,-2L4,0L0,2"}])
         .enter()
         .append("marker")
-        .attr("id", function(d) { return d.id })
+        .attr("id", function(d) { return d.id; })
         .attr("viewBox", "0 -5 10 10")
-        .attr("refX", function(d) { return d.refX })
+        .attr("refX", function(d) { return d.refX; })
         .attr("refY", 0)
         .attr("markerWidth", 8)
         .attr("markerHeight", 8)
         .attr("orient", "auto")
         .append("path")
-        .attr("d", "M0,-5L10,0L0,5");
+        .attr("d", function(d) { return d.path; });
 
     var linkElements = svg.append("g").attr("id", "linkg").selectAll(".link"),
         nodeElements = svg.append("g").attr("id", "nodeg").selectAll(".node"),
         newPathElement = svg.append("path")
                             .attr("id", "newEdge")
-                            .attr("class", "link")
+                            .classed("link", true)
                             .attr("marker-end", "url(#fararrowhead)")
                             .attr("visibility", "hidden");
 
@@ -114,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var shiftKeyEngaged = false;
     d3.select(window)
         .on("keydown", function() {
-            if (d3.event.keyCode === 16) {
+            if (d3.event.keyCode === 16) { //shift
                 shiftKeyEngaged = shiftKeyEngaged ||
                     nodeElements.call(d3.behavior.drag()
                         .on("dragstart", function(node) {
@@ -142,9 +145,13 @@ document.addEventListener("DOMContentLoaded", function() {
                             })
                         }))
                       || true;
-            } else if (d3.event.keyCode === 46) {
-                d3.select(".node.selected").each(function (d) {
-                    page.LinkGraph.removeNode(d.value.url);
+            } else if (d3.event.keyCode === 46) { //delete
+                d3.selectAll(".selected").each(function (d) {
+                    if (d3.select(this).classed("node")) {
+                        page.LinkGraph.removeNode(d.value.url);
+                    } else if (d3.select(this).classed("link")) {
+                        page.LinkGraph.removeLink(d.sourceUrl, d.targetUrl);
+                    }
                 });
                 updateGraph();
             }})
@@ -203,8 +210,15 @@ document.addEventListener("DOMContentLoaded", function() {
         selection
             .enter()
             .append("path")
-            .attr("class", "link")
-            .attr("marker-end", "url(#arrowhead)");
+            .classed("link", true)
+            .attr("marker-end", "url(#normalarrowhead)")
+            .on("click", function () {
+                clearDetailPaneAndSelection();
+                d3.select(this).classed("selected", true)
+                               .attr("marker-end", "url(#selectedarrowhead)");
+            });
+        // linkElements.classed("selected", false)
+        //     .attr("marker-end", "url(#normalarrowhead)")
         linkElements = svg.select("#linkg").selectAll(".link");
     };
 
@@ -216,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function() {
         selection.exit().remove();
         selection.enter()
             .append("circle")
-            .attr("class", "node")
+            .classed("node", true)
             .attr("r", 16)
             .attr("stroke-dasharray", function (d) {
                 if (d.value.organization) {
@@ -336,7 +350,8 @@ document.addEventListener("DOMContentLoaded", function() {
     /* Detail pane clearing */
     function clearDetailPaneAndSelection() {
         clearDetailPane();
-        d3.select(".node.selected").classed("selected", false);
+        d3.selectAll(".link.selected").attr("marker-end", "url(#normalarrowhead)")
+        d3.selectAll(".selected").classed("selected", false);
     };
 
     function clearDetailPane() {
