@@ -103,11 +103,18 @@ document.addEventListener("DOMContentLoaded", function() {
     prepareLinks();
     prepareNodes();
 
+    /* Update messages */
+    chrome.runtime.onMessage.addListener(function (message) {
+        if (message === "UpdateVisualization") {
+            updateGraph();
+        }
+    });
+
     /* Key bindings */
     var shiftKeyEngaged = false;
     d3.select(window)
         .on("keydown", function() {
-            if (d3.event.keyCode == 16) {
+            if (d3.event.keyCode === 16) {
                 shiftKeyEngaged = shiftKeyEngaged ||
                     nodeElements.call(d3.behavior.drag()
                         .on("dragstart", function(node) {
@@ -125,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             newPathElement.attr("visibility", "hidden");
                             var mouseLoc = d3.mouse(this);
                             nodeElements.each(function (desnode) {
-                                if (!(node == desnode)) {
+                                if (!(node === desnode)) {
                                     if (Math.sqrt(Math.pow((desnode.x-mouseLoc[0]), 2)
                                             + (Math.pow((desnode.y-mouseLoc[1]), 2))) < 16) {
                                         page.LinkGraph.addLink(node.value.url, desnode.value.url);
@@ -135,14 +142,14 @@ document.addEventListener("DOMContentLoaded", function() {
                             })
                         }))
                       || true;
-            } else if (d3.event.keyCode == 46) {
+            } else if (d3.event.keyCode === 46) {
                 d3.select(".node.selected").each(function (d) {
                     page.LinkGraph.removeNode(d.value.url);
                 });
                 updateGraph();
             }})
         .on("keyup", function() {
-            if (d3.event.keyCode == 16) {
+            if (d3.event.keyCode === 16) {
                 shiftKeyEngaged = shiftKeyEngaged &&
                     nodeElements.call(force.drag()) &&
                     false;
@@ -165,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function() {
                .attr("height", height);
             force.size([width, height]);
         }
-    }
+    };
 
     /* Helper functions */
 
@@ -178,13 +185,13 @@ document.addEventListener("DOMContentLoaded", function() {
              .start();
         prepareLinks();
         prepareNodes();
-    }
+    };
 
     function updateGraphNodes() {
         getNodes();
         force.nodes(graphNodes).start();
         prepareNodes();
-    }
+    };
 
     /* Create HTML elements for the links and nodes to display */
     function prepareLinks() {
@@ -211,7 +218,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .append("circle")
             .attr("class", "node")
             .attr("r", 16)
-            .attr("fill", function (d) {return d.value.color})
             .attr("stroke-dasharray", function (d) {
                 if (d.value.organization) {
                     return "4 2";
@@ -226,6 +232,8 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .on("mouseover", showTitlePane)
             .on("mouseout", hideTitlePane);
+        selection.attr("fill", function (d) { return d.value.color; });
+
         nodeElements = svg.select("#nodeg").selectAll(".node");
     };
 
@@ -240,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .attr("src", icon);
         optionDiv.append("p")
             .html(text)
-    }
+    };
 
     // Helper to add a color option to the edit interface
     function addColorRadio(form, value, label) {
@@ -250,7 +258,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .property("value", value);
         form.append("label").html(label);
         form.append("br");
-    }
+    };
 
     // Display the detail information for a node
     function showDetails(node) {
@@ -314,8 +322,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     page.LinkGraph.changeColor(node.value.url,
                             document.editForm.color.value || node.value.color);
 
+                    prepareNodes();
                     clearDetailPaneAndSelection();
-                    nodeElements.attr("fill", function (d) {return d.value.color})
 
                     // This line is necessary for chrome compatibility.
                     // Without this line, the form is still sent despite returning false.
@@ -323,17 +331,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     return false;
                 })
         });
-    }
+    };
 
     /* Detail pane clearing */
     function clearDetailPaneAndSelection() {
         clearDetailPane();
         d3.select(".node.selected").classed("selected", false);
-    }
+    };
 
     function clearDetailPane() {
         d3.select("#detailPane").selectAll("*").remove();
-    }
+    };
 
     /* Title popup functionality */
     function showTitlePane(node) {
@@ -342,10 +350,10 @@ document.addEventListener("DOMContentLoaded", function() {
             .style("top", (node.y + 20) + "px")
             .html(node.value.title)
             .style("visibility", "visible");
-    }
+    };
 
     function hideTitlePane() {
         d3.select("#titlePane")
             .style("visibility", "hidden");
-    }
+    };
 }, false);

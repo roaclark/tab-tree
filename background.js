@@ -1,10 +1,14 @@
-openTab = function(url) {
+function openTab(url) {
     chrome.tabs.create({
         url: url
     });
 }
 
-createPageMenuItem = function(title, parent, onclick) {
+function updateGraphVisualization() {
+    chrome.runtime.sendMessage("UpdateVisualization");
+}
+
+function createPageMenuItem(title, parent, onclick) {
     var menuItem = {
         title: title,
         contexts: ['page']
@@ -18,7 +22,7 @@ createPageMenuItem = function(title, parent, onclick) {
     return menuItem;
 }
 
-createContextMenus = function (currentTabInGraph) {
+function createContextMenus(currentTabInGraph) {
     chrome.contextMenus.removeAll();
     
     if (currentTabInGraph) {
@@ -33,6 +37,7 @@ createContextMenus = function (currentTabInGraph) {
                     function(info, tab) {
                         LinkGraph.removeNode(info.pageUrl);
                         createContextMenus(false);
+                        updateGraphVisualization();
                     }));
                 var updatePage = chrome.contextMenus.create(createPageMenuItem(
                         'Update page',
@@ -43,12 +48,14 @@ createContextMenus = function (currentTabInGraph) {
                             updatePage,
                             function(info, tab) {
                                 LinkGraph.setTitle(info.pageUrl, prompt("Enter a title"));
+                                updateGraphVisualization();
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
                             'Change description',
                             updatePage,
                             function(info, tab) {
                                 LinkGraph.setDescription(info.pageUrl, prompt("Enter a description"));
+                                updateGraphVisualization();
                             }));
                     });
                 var markPage = chrome.contextMenus.create(createPageMenuItem(
@@ -60,48 +67,56 @@ createContextMenus = function (currentTabInGraph) {
                             markPage,
                             function(info, tab) {
                                 LinkGraph.changeColor(info.pageUrl, "#e00");
+                                updateGraphVisualization();
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
                             'Orange',
                             markPage,
                             function(info, tab) {
                                 LinkGraph.changeColor(info.pageUrl, "#f70");
+                                updateGraphVisualization();
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
                             'Yellow',
                             markPage,
                             function(info, tab) {
                                 LinkGraph.changeColor(info.pageUrl, "#fe2");
+                                updateGraphVisualization();
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
                             'Green',
                             markPage,
                             function(info, tab) {
                                 LinkGraph.changeColor(info.pageUrl, "#3d0");
+                                updateGraphVisualization();
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
                             'Blue',
                             markPage,
                             function(info, tab) {
                                 LinkGraph.changeColor(info.pageUrl, "#3ae");
+                                updateGraphVisualization();
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
                             'Purple',
                             markPage,
                             function(info, tab) {
                                 LinkGraph.changeColor(info.pageUrl, "#a0d");
+                                updateGraphVisualization();
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
                             'White',
                             markPage,
                             function(info, tab) {
                                 LinkGraph.changeColor(info.pageUrl, "#fff");
+                                updateGraphVisualization();
                             }));
                         chrome.contextMenus.create(createPageMenuItem(
                             'Gray',
                             markPage,
                             function(info, tab) {
                                 LinkGraph.changeColor(info.pageUrl, "#ccc");
+                                updateGraphVisualization();
                             }));
                     });
                 chrome.contextMenus.create({
@@ -117,6 +132,7 @@ createContextMenus = function (currentTabInGraph) {
                             var url = "https://www.google.com/#q=" + encodeURI(query);
                             LinkGraph.addSearchNode(url, query, info.pageUrl);
                             openTab(url);
+                            updateGraphVisualization();
                         }
                     }));
             });
@@ -130,6 +146,7 @@ createContextMenus = function (currentTabInGraph) {
                 } else {
                     LinkGraph.addNode(info.linkUrl, null, null, null, null, info.pageUrl);
                 }
+                updateGraphVisualization();
             }});
     } else {
         chrome.contextMenus.create(createPageMenuItem(
@@ -138,6 +155,7 @@ createContextMenus = function (currentTabInGraph) {
             function(info, tab) {
                 LinkGraph.addNode(info.pageUrl, tab.title);
                 createContextMenus(true);
+                updateGraphVisualization();
             }));
     }
 }
@@ -154,7 +172,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (tabId == activeTabId && changeInfo.url) {
+    if (tabId === activeTabId && changeInfo.url) {
         createContextMenus(LinkGraph.getNode(changeInfo.url));
     }
 });
