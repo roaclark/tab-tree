@@ -1,28 +1,31 @@
-document.addEventListener("DOMContentLoaded", function() {
-    var page = chrome.extension.getBackgroundPage();
 
-    var pageNodes = [],
-        pageLinks = [];
+var page = chrome.extension.getBackgroundPage();
 
-    function getNodes() {
-        pageNodes = page.LinkGraph.getNodes();
+/* Retrieve graph representation */
+var graphNodes = [],
+    graphLinks = [];
+
+function getNodes() {
+    graphNodes = page.LinkGraph.getNodes();
+}
+
+function generateLinks() {
+    var nodeMapping = {}
+    for (var i = 0; i < graphNodes.length; i++) {
+        nodeMapping[graphNodes[i].value.url] = i;
     }
 
-    function generateLinks() {
-        var nodeMapping = {}
-        for (var i = 0; i < pageNodes.length; i++) {
-            nodeMapping[pageNodes[i].value.url] = i;
+    graphLinks = [];
+    graphNodes.forEach(function (node) {
+        for (childid in node.childids) {
+            graphLinks.push({source: nodeMapping[node.value.url],
+                       target: nodeMapping[childid]});
         }
+    });
+}
 
-        pageLinks = [];
-        pageNodes.forEach(function (node) {
-            for (childid in node.childids) {
-                pageLinks.push({source: nodeMapping[node.value.url],
-                           target: nodeMapping[childid]});
-            }
-        });
-    }
-
+document.addEventListener("DOMContentLoaded", function() {
+    /* Set up svg */
     var width = window.innerWidth - document.getElementById("detailPane").offsetWidth,
         height = window.innerHeight - 50;
 
@@ -66,13 +69,14 @@ document.addEventListener("DOMContentLoaded", function() {
         .attr("d", "M0,-5L10,0L0,5");
 
     var linkElements = svg.append("g").attr("id", "linkg").selectAll(".link"),
-        nodeElements = svg.append("g").attr("id", "nodeg").selectAll(".node");
+        nodeElements = svg.append("g").attr("id", "nodeg").selectAll(".node"),
         newPathElement = svg.append("path")
                             .attr("id", "newEdge")
                             .attr("class", "link")
                             .attr("marker-end", "url(#fararrowhead)")
                             .attr("visibility", "hidden");
 
+    /* Build D3 graph */
     getNodes();
     generateLinks();
     var force = d3.layout.force()
@@ -93,10 +97,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 node.fixed = true;
             });
         })
-        .nodes(pageNodes)
-        .links(pageLinks)
+        .nodes(graphNodes)
+        .links(graphLinks)
         .start();
+    prepareLinks();
+    prepareNodes();
 
+    /* Key bindings */
     var shiftKeyEngaged = false;
     d3.select(window)
         .on("keydown", function() {
@@ -139,8 +146,91 @@ document.addEventListener("DOMContentLoaded", function() {
                 shiftKeyEngaged = shiftKeyEngaged &&
                     nodeElements.call(force.drag()) &&
                     false;
-            }})
+            }});
 
+    /* Icon triggers layout adjustment */
+    document.getElementById("icon").onclick = function() {
+        force.nodes().forEach(function (node) {
+            node.fixed = false;
+        });
+        force.start();
+    };
+
+    /* Resets the visualization bounds */
+    window.onresize = function(event) {
+        for (a in event) {
+            width = window.innerWidth - document.getElementById("detailPane").offsetWidth,
+            height = window.innerHeight - 50;
+            svg.attr("width", width)
+               .attr("height", height);
+            force.size([width, height]);
+        }
+    }
+
+    /* Helper functions */
+
+    /* Update and display the graph */
+    function updateGraph() {
+        getNodes();
+        generateLinks();
+        force.nodes(graphNodes)
+             .links(graphLinks)
+             .start();
+        prepareLinks();
+        prepareNodes();
+    }
+
+    function updateGraphNodes() {
+        getNodes();
+        force.nodes(graphNodes).start();
+        prepareNodes();
+    }
+
+    /* Create HTML elements for the links and nodes to display */
+    function prepareLinks() {
+        var selection = svg.select("#linkg").selectAll(".link").data(graphLinks);
+
+        selection
+            .exit()
+            .remove();
+        selection
+            .enter()
+            .append("path")
+            .attr("class", "link")
+            .attr("marker-end", "url(#arrowhead)");
+        linkElements = svg.select("#linkg").selectAll(".link");
+    };
+
+    function prepareNodes() {
+        var selection = svg.select("#nodeg").selectAll(".node").data(graphNodes, function(node) {
+            return node.value.url;
+        });
+
+        selection.exit().remove();
+        selection.enter()
+            .append("circle")
+            .attr("class", "node")
+            .attr("r", 16)
+            .attr("fill", function (d) {return d.value.color})
+            .attr("stroke-dasharray", function (d) {
+                if (d.value.organization) {
+                    return "4 2";
+                } else {
+                    return "1 0";
+                }
+            })
+            .call(force.drag())
+            .on("click", showDetails)
+            .on("dblclick", function(node) {
+                page.openTab(node.value.url);
+            })
+            .on("mouseover", showTitlePane)
+            .on("mouseout", hideTitlePane);
+        nodeElements = svg.select("#nodeg").selectAll(".node");
+    };
+
+    /* Fill detail pane */
+    // Helper to create node manipulation options
     function makeOption(container, text, icon, onclick) {
         var optionDiv = container.append("div")
             .classed("nodeOption", true)
@@ -152,6 +242,17 @@ document.addEventListener("DOMContentLoaded", function() {
             .html(text)
     }
 
+    // Helper to add a color option to the edit interface
+    function addColorRadio(form, value, label) {
+        form.append("input")
+            .property("type", "radio")
+            .property("name", "color")
+            .property("value", value);
+        form.append("label").html(label);
+        form.append("br");
+    }
+
+    // Display the detail information for a node
     function showDetails(node) {
         clearDetailPaneAndSelection();
         d3.select(this).classed("selected", true);
@@ -191,62 +292,14 @@ document.addEventListener("DOMContentLoaded", function() {
                                    .property("value", node.value.description);
             form.append("br");
 
-            form.append("input")
-                .property("type", "radio")
-                .property("name", "color")
-                .property("value", "#e00");
-            form.append("label").html("Red");
-            form.append("br");
-
-            form.append("input")
-               .property("type", "radio")
-               .property("name", "color")
-               .property("value", "#f70");
-            form.append("label").html("Orange");
-            form.append("br");
-
-            form.append("input")
-                .property("type", "radio")
-                .property("name", "color")
-                .property("value", "#fe2");
-            form.append("label").html("Yellow");
-            form.append("br");
-
-            form.append("input")
-                .property("type", "radio")
-                .property("name", "color")
-                .property("value", "#3d0");
-            form.append("label").html("Green");
-            form.append("br");
-
-            form.append("input")
-                .property("type", "radio")
-                .property("name", "color")
-                .property("value", "#3ae");
-            form.append("label").html("Blue");
-            form.append("br");
-
-            form.append("input")
-                .property("type", "radio")
-                .property("name", "color")
-                .property("value", "#a0d");
-            form.append("label").html("Purple");
-            form.append("br");
-
-            form.append("input")
-                .property("type", "radio")
-                .property("name", "color")
-                .property("value", "#fff");
-            form.append("label").html("White");
-            form.append("br");
-
-            form.append("input")
-                .property("type", "radio")
-                .property("name", "color")
-                .property("value", "#ccc");
-            form.append("label").html("Gray");
-            form.append("br");
-
+            addColorRadio(form, "#e00", "Red");
+            addColorRadio(form, "#f70", "Orange");
+            addColorRadio(form, "#fe2", "Yellow");
+            addColorRadio(form, "#3d0", "Green");
+            addColorRadio(form, "#3ae", "Blue");
+            addColorRadio(form, "#a0d", "Purple");
+            addColorRadio(form, "#fff", "White");
+            addColorRadio(form, "#ccc", "Gray");
             form.select("[value=\"" + node.value.color + "\"]").attr("checked", true);
 
             form.append("input").property("type", "submit")
@@ -272,6 +325,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    /* Detail pane clearing */
     function clearDetailPaneAndSelection() {
         clearDetailPane();
         d3.select(".node.selected").classed("selected", false);
@@ -281,6 +335,7 @@ document.addEventListener("DOMContentLoaded", function() {
         d3.select("#detailPane").selectAll("*").remove();
     }
 
+    /* Title popup functionality */
     function showTitlePane(node) {
         d3.select("#titlePane")
             .style("left", (node.x + 30) + "px")
@@ -292,83 +347,5 @@ document.addEventListener("DOMContentLoaded", function() {
     function hideTitlePane() {
         d3.select("#titlePane")
             .style("visibility", "hidden");
-    }
-
-    function prepareLinks() {
-        var selection = svg.select("#linkg").selectAll(".link").data(pageLinks);
-
-        selection
-            .exit()
-            .remove();
-        selection
-            .enter()
-            .append("path")
-            .attr("class", "link")
-            .attr("marker-end", "url(#arrowhead)");
-        linkElements = svg.select("#linkg").selectAll(".link");
-    };
-
-    function prepareNodes() {
-        var selection = svg.select("#nodeg").selectAll(".node").data(pageNodes, function(node) {
-            return node.value.url;
-        });
-
-        selection.exit().remove();
-        selection.enter()
-            .append("circle")
-            .attr("class", "node")
-            .attr("r", 16)
-            .attr("fill", function (d) {return d.value.color})
-            .attr("stroke-dasharray", function (d) {
-                if (d.value.organization) {
-                    return "4 2";
-                } else {
-                    return "1 0";
-                }
-            })
-            .call(force.drag())
-            .on("click", showDetails)
-            .on("dblclick", function(node) {
-                page.openTab(node.value.url);
-            })
-            .on("mouseover", showTitlePane)
-            .on("mouseout", hideTitlePane);
-        nodeElements = svg.select("#nodeg").selectAll(".node");
-    };
-
-    prepareLinks();
-    prepareNodes();
-
-    function updateGraph() {
-        getNodes();
-        generateLinks();
-        force.nodes(pageNodes)
-             .links(pageLinks)
-             .start();
-        prepareLinks();
-        prepareNodes();
-    }
-
-    function updateGraphNodes() {
-        getNodes();
-        force.nodes(pageNodes).start();
-        prepareNodes();
-    }
-
-    document.getElementById("icon").onclick = function() {
-        force.nodes().forEach(function (node) {
-            node.fixed = false;
-        });
-        force.start();
-    };
-
-    window.onresize = function(event) {
-        for (a in event) {
-            width = window.innerWidth - document.getElementById("detailPane").offsetWidth,
-            height = window.innerHeight - 50;
-            svg.attr("width", width)
-               .attr("height", height);
-            force.size([width, height]);
-        }
     }
 }, false);
