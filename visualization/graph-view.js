@@ -211,14 +211,14 @@ document.addEventListener("DOMContentLoaded", function() {
             .enter()
             .append("path")
             .classed("link", true)
-            .attr("marker-end", "url(#normalarrowhead)")
             .on("click", function () {
                 clearDetailPaneAndSelection();
                 d3.select(this).classed("selected", true)
                                .attr("marker-end", "url(#selectedarrowhead)");
             });
-        // linkElements.classed("selected", false)
-        //     .attr("marker-end", "url(#normalarrowhead)")
+        selection.classed("selected", false)
+                 .attr("marker-end", "url(#normalarrowhead)");
+                 
         linkElements = svg.select("#linkg").selectAll(".link");
     };
 
