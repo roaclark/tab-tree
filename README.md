@@ -3,12 +3,7 @@ This is a chrome extension to help track sites. Sites are represented as nodes i
 Installation
 ------------
 
-1. Clone the repository 
-`git clone https://github.com/roaclark/tab-tree.git`
-
-OR
-
-Download the project as a zip and unpack it
+1. Clone the repository `git clone https://github.com/roaclark/tab-tree.git` **OR** Download the project as a zip and unpack it
 
 2. Go to `chrome://extensions` in your browser.
 
