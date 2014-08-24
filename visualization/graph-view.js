@@ -81,13 +81,13 @@ document.addEventListener("DOMContentLoaded", function() {
                             .attr("marker-end", "url(#fararrowhead)")
                             .attr("visibility", "hidden");
 
-    /* Set up zzoom and pan behavior */
-    d3.behavior.zoom()
-               .scaleExtent([0, 1.5])
-               .on("zoom", function () {
-                   graphElement.attr("transform", "scale(" + d3.event.scale + ") translate(" + d3.event.translate + ")");
-               })
-            (svg);
+    /* Set up zoom and pan behavior */
+    var zoomBehavior = d3.behavior.zoom()
+                         .scaleExtent([0, 1.5])
+                         .on("zoom", function () {
+                             graphElement.attr("transform", "scale(" + d3.event.scale + ") translate(" + d3.event.translate + ")");
+                         });
+    svg.call(zoomBehavior);
 
     /* Build D3 graph */
     getNodes();
@@ -381,9 +381,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /* Title popup functionality */
     function showTitlePane(node) {
+        var scale = zoomBehavior.scale();
+        var translate = zoomBehavior.translate();
+
+        var left = (node.x + translate[0]) * scale + 30 * Math.sqrt(scale);
+        var top = (node.y + translate[1]) * scale + 20 * Math.sqrt(scale);
+
         d3.select("#titlePane")
-            .style("left", (node.x + 30) + "px")
-            .style("top", (node.y + 20) + "px")
+            .style("left", left + "px")
+            .style("top", top + "px")
             .html(node.value.title)
             .style("visibility", "visible");
     };
