@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /* Set up zzoom and pan behavior */
     d3.behavior.zoom()
-               .scaleExtent([0, 1])
+               .scaleExtent([0, 1.5])
                .on("zoom", function () {
                    graphElement.attr("transform", "scale(" + d3.event.scale + ") translate(" + d3.event.translate + ")");
                })

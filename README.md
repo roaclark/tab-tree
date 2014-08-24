@@ -6,6 +6,10 @@ Installation
 1. Clone the repository 
 `git clone https://github.com/roaclark/tab-tree.git`
 
+OR
+
+Download the project as a zip and unpack it
+
 2. Go to `chrome://extensions` in your browser.
 
 3. Select the 'Developer mode' checkbox if it is not already selected.
@@ -36,12 +40,14 @@ The application is used to visualize the tree. Each node represents one page as 
 The following user interactions are available:
 
 * Shift + drag - Creates a new link between the source and destination nodes.
-* Drag - Moves a node.
+* Node + drag - Moves a node.
+* Drag - Pans across the graph.
+* Scroll - Zooms in and out in the graph
 * Hover - Displays the node title.
 * Click on node - Displays page info in the panel on the right side. Also includes editing options.
 * Click on background - Clears information panel.
 * Double click on node - Opens the page in a new tab.
-* Double click on background - Adds a new organization node. Prompts the user for the title and description. Organization nodes have dashed outlines and are yellow by default.
+* Double click on background - Adds a new organization node. Prompts the user for the title and description. Organization nodes have dashed outlines and are white by default.
 * Delete - Removes any selected nodes from the graph.
 
 The icon in the upper left corner triggers automatic layout adjustment.
