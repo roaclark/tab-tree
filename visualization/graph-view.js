@@ -71,13 +71,23 @@ document.addEventListener("DOMContentLoaded", function() {
         .append("path")
         .attr("d", function(d) { return d.path; });
 
-    var linkElements = svg.append("g").attr("id", "linkg").selectAll(".link"),
-        nodeElements = svg.append("g").attr("id", "nodeg").selectAll(".node"),
-        newPathElement = svg.append("path")
+    var graphElement = svg.append("g").attr("id", "graphg")
+
+    var linkElements = graphElement.append("g").attr("id", "linkg").selectAll(".link"),
+        nodeElements = graphElement.append("g").attr("id", "nodeg").selectAll(".node"),
+        newPathElement = graphElement.append("path")
                             .attr("id", "newEdge")
                             .classed("link", true)
                             .attr("marker-end", "url(#fararrowhead)")
                             .attr("visibility", "hidden");
+
+    /* Set up zzoom and pan behavior */
+    d3.behavior.zoom()
+               .scaleExtent([0, 1])
+               .on("zoom", function () {
+                   graphElement.attr("transform", "scale(" + d3.event.scale + ") translate(" + d3.event.translate + ")");
+               })
+            (svg);
 
     /* Build D3 graph */
     getNodes();
@@ -121,17 +131,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 shiftKeyEngaged = shiftKeyEngaged ||
                     nodeElements.call(d3.behavior.drag()
                         .on("dragstart", function(node) {
+                            d3.event.sourceEvent.stopPropagation();
                             newPathElement
                                 .attr("d", "M" + (node.x) + "," + (node.y))
                                 .attr("visibility", "visible");
                         })
                         .on("drag", function(node) {
+                            d3.event.sourceEvent.stopPropagation();
                             var mouseLoc = d3.mouse(this);
                             newPathElement
                                 .attr("d", "M" + (node.x) + "," + (node.y) +
                                            "L" + mouseLoc[0] + "," + mouseLoc[1]);
                         })
                         .on("dragend", function(node) {
+                            d3.event.sourceEvent.stopPropagation();
                             newPathElement.attr("visibility", "hidden");
                             var mouseLoc = d3.mouse(this);
                             nodeElements.each(function (desnode) {
@@ -158,7 +171,11 @@ document.addEventListener("DOMContentLoaded", function() {
         .on("keyup", function() {
             if (d3.event.keyCode === 16) {
                 shiftKeyEngaged = shiftKeyEngaged &&
-                    nodeElements.call(force.drag()) &&
+                    nodeElements.call(force.drag())
+                                // workaround to stop zoom behavior
+                                .on("mousedown", function() {
+                                    d3.event.stopPropagation();
+                                }) &&
                     false;
             }});
 
@@ -240,6 +257,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             })
             .call(force.drag())
+            // workaround to stop zoom behavior
+            .on("mousedown", function() {
+                d3.event.stopPropagation();
+            })
             .on("click", showDetails)
             .on("dblclick", function(node) {
                 page.openTab(node.value.url);
