@@ -8,10 +8,13 @@ function updateGraphVisualization() {
     chrome.runtime.sendMessage("UpdateVisualization");
 }
 
+var nonLinkContexts = ['page', 'frame', 'selection', 'editable',
+                       'image', 'video', 'audio'];
+
 function createPageMenuItem(title, parent, onclick) {
     var menuItem = {
         title: title,
-        contexts: ['all']
+        contexts: nonLinkContexts
     }
     if (parent) {
         menuItem.parentId = parent;
@@ -28,7 +31,7 @@ function createContextMenus(currentTabInGraph) {
     if (currentTabInGraph) {
         var root = chrome.contextMenus.create({
                 title: 'TabTree',
-                contexts: ['all']
+                contexts: nonLinkContexts
             },
             function() {
                 chrome.contextMenus.create(createPageMenuItem(
