@@ -11,7 +11,7 @@ function updateGraphVisualization() {
 function createPageMenuItem(title, parent, onclick) {
     var menuItem = {
         title: title,
-        contexts: ['page']
+        contexts: ['all']
     }
     if (parent) {
         menuItem.parentId = parent;
@@ -28,7 +28,7 @@ function createContextMenus(currentTabInGraph) {
     if (currentTabInGraph) {
         var root = chrome.contextMenus.create({
                 title: 'TabTree',
-                contexts: ['page']
+                contexts: ['all']
             },
             function() {
                 chrome.contextMenus.create(createPageMenuItem(
