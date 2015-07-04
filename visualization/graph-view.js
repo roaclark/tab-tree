@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }});
 
     /* Icon triggers layout adjustment */
-    document.getElementById("icon").onclick = function() {
+    document.getElementById("magnet").onclick = function() {
         force.nodes().forEach(function (node) {
             node.fixed = false;
         });
@@ -306,19 +306,19 @@ document.addEventListener("DOMContentLoaded", function() {
         detailDiv.append("br");
         detailDiv.append("hr");
         
-        makeOption(detailDiv, "Remove", "../images/icon2.png", function() {
+        makeOption(detailDiv, "Remove", "../images/x.png", function() {
             clearDetailPane()
             page.LinkGraph.removeNode(node.value.url);
             updateGraph();
         });
 
-        makeOption(detailDiv, "Collapse", "../images/icon2.png", function() {
+        makeOption(detailDiv, "Collapse", "../images/collapse.png", function() {
             clearDetailPane()
             page.LinkGraph.collapseNode(node.value.url);
             updateGraph();
         });
 
-        makeOption(detailDiv, "Edit", "../images/icon2.png", function() {
+        makeOption(detailDiv, "Edit", "../images/pencil.png", function() {
             clearDetailPane()
             var form = d3.select("#detailPane").append("form")
                 .property("name", "editForm");
