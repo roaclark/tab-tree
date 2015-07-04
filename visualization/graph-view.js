@@ -302,7 +302,14 @@ document.addEventListener("DOMContentLoaded", function() {
         d3.select(this).classed("selected", true);
         var detailDiv = d3.select("#detailPane").append("div");
         detailDiv.append("p").append("h2").html(node.value.title);
-        detailDiv.append("p").html(node.value.description);
+        
+        var descriptionBlocks = node.value.description.split("\n")
+        detailDiv.append("div").selectAll("p")
+                               .data(descriptionBlocks)
+                               .enter()
+                               .append("p")
+                               .html(function(d) { return d; })
+
         detailDiv.append("p").html("(" + node.value.url + ")");
         detailDiv.append("br");
         detailDiv.append("hr");
