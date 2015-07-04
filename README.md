@@ -26,7 +26,7 @@ Context menus are used to conveniently add pages from a tab. The following conte
 * "TabTree / Update page / Change description" (when page is in tree) - Updates the value stored as the description for the page in the active tab.
 * "TabTree / Change color..." (when page is in tree) - Changes color of the page node.
 * "TabTree / Search from this page" (when page is in tree) - Prompts the user for a search query. Creates a new search page node in the tree to represent the search. Opens a Google search for the query in a new tab. Search nodes are blue by default.
-* "Add this link as a child page" (when page is in tree and link is selected) - Adds the link destination to the tree as a new page node. The node is marked as unread with no title or description. Also adds an edge from the page in the active tab to the newly created page.
+* "Add this link as a child page" (when page is in tree and link is selected) - Adds the link destination to the tree as a new page node. The node is marked as unread, the title is set to the text of the link, and no description is assigned. Also adds an edge from the page in the active tab to the newly created page.
 
 ###Application
 

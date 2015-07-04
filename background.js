@@ -147,7 +147,9 @@ function createContextMenus(currentTabInGraph) {
                 if (LinkGraph.getNode(info.linkUrl)) {
                     LinkGraph.addLink(info.pageUrl, info.linkUrl);
                 } else {
-                    LinkGraph.addNode(info.linkUrl, null, null, null, null, info.pageUrl);
+                    chrome.tabs.executeScript(null, {code: 'document.activeElement.innerHTML'}, function(results) {
+                        LinkGraph.addNode(info.linkUrl, results[0], null, null, null, info.pageUrl);
+                    });
                 }
                 updateGraphVisualization();
             }});

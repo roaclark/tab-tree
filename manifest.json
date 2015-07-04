@@ -23,6 +23,8 @@
     "permissions": [
         "tabs",
         "contextMenus",
-        "storage"
+        "storage",
+        "http://*/*",
+        "https://*/*"
     ]
 }
