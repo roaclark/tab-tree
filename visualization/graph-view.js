@@ -161,6 +161,7 @@ document.addEventListener("DOMContentLoaded", function() {
             } else if (d3.event.keyCode === 46) { //delete
                 d3.selectAll(".selected").each(function (d) {
                     if (d3.select(this).classed("node")) {
+                        clearDetailPane();
                         page.LinkGraph.removeNode(d.value.url);
                     } else if (d3.select(this).classed("link")) {
                         page.LinkGraph.removeLink(d.sourceUrl, d.targetUrl);
@@ -307,19 +308,19 @@ document.addEventListener("DOMContentLoaded", function() {
         detailDiv.append("hr");
         
         makeOption(detailDiv, "Remove", "../images/x.png", function() {
-            clearDetailPane()
+            clearDetailPane();
             page.LinkGraph.removeNode(node.value.url);
             updateGraph();
         });
 
         makeOption(detailDiv, "Collapse", "../images/collapse.png", function() {
-            clearDetailPane()
+            clearDetailPane();
             page.LinkGraph.collapseNode(node.value.url);
             updateGraph();
         });
 
         makeOption(detailDiv, "Edit", "../images/pencil.png", function() {
-            clearDetailPane()
+            clearDetailPane();
             var form = d3.select("#detailPane").append("form")
                 .property("name", "editForm");
 
