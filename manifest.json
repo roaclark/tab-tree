@@ -2,13 +2,15 @@
     "manifest_version": 2,
 
     "name": "TabTree",
+    "short_name": "TabTree",
     "description": "Tab workflow tracker",
-    "version": "1.0",
+    "version": "1.0.0",
+    "homepage_url": "https://github.com/roaclark/tab-tree",
 
     "icons": {
-        "16": "images/icon-16.png",
-        "48": "images/icon-48.png",
-        "128": "images/icon-128.png"
+        "16": "images/icon-smooth-16.png",
+        "48": "images/icon-smooth-48.png",
+        "128": "images/icon-smooth-128.png"
     },
 
     "browser_action": {

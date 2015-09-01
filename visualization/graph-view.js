@@ -180,12 +180,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     false;
             }});
 
-    /* Icon triggers layout adjustment */
+    /* Magnet icon triggers layout adjustment */
     document.getElementById("magnet").onclick = function() {
         force.nodes().forEach(function (node) {
             node.fixed = false;
         });
         force.start();
+    };
+
+    /* Question icon triggers help */
+    document.getElementById("help").onclick = function() {
+        showHelp();
     };
 
     /* Resets the visualization bounds */
@@ -374,6 +379,39 @@ document.addEventListener("DOMContentLoaded", function() {
                     return false;
                 })
         });
+    };
+
+    // Display help information
+    function showHelp() {
+        clearDetailPaneAndSelection();
+        var detailDiv = d3.select("#detailPane").append("div");
+        detailDiv.append("p").append("h2").html("Help");
+        
+        detailDiv.append("p").html(
+            "This application is used to visualize the tree. Each node " +
+                "represents one page as defined through context menus " +
+                "or the application itself. Edges represent links " +
+                "between pages.<br><br>" +
+            "The following user interactions are available:" +
+            "<ul>" +
+            "<li> Shift + drag - Creates a new link between the " +
+                    "source and destination nodes." +
+            "<li> Node + drag - Moves a node." +
+            "<li> Drag - Pans across the graph." +
+            "<li> Scroll - Zooms in and out in the graph" +
+            "<li> Hover - Displays the node title." +
+            "<li> Click on node - Displays page info in the panel on " +
+                    "the right side. Also includes editing options." +
+            "<li> Click on background - Clears information panel." +
+            "<li> Double click on node - Opens the page in a new tab." +
+            "<li> Double click on background - Adds a new organization " +
+                    "node. Prompts the user for the title and " +
+                    "description.Organization nodes have dashed " +
+                    "outlines and are white by default." +
+            "<li> Delete - Removes any selected nodes from the graph." +
+            "</ul>" +
+            "The magnet icon in the upper left corner triggers " +
+                "automatic layout adjustment.");
     };
 
     /* Detail pane clearing */
